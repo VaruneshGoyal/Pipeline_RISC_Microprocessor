@@ -1,0 +1,59 @@
+--ADD
+--ADC
+--ADZ
+--ADI
+--NDU
+--NDC
+NDZ
+--LHI
+--LW
+--SW
+--LM
+--SM
+--BEQ
+--JAL
+--JLR
+
+
+
+
+LHI : to r0, 0000 0000 1|000 0000    //i.e. 128           --LW : from loc 100 to r0 : value = 50
+LM  : from loc in r0 (i.e. 128) to R0, R1, R2, R6, R7 : values : 1,2,3,10,5 (should branch to loc 5 as R7 has changed) 
+
+
+
+LM  : from r1 to none (should goto next instruction)
+ADD : r4 = r1 + r6 : r4 = 2 + 10 = 12
+ADC : r3 = r1+r0 //shouldnt execute
+ADZ : r7 = r3 + r4//shouldn't execute
+NDU : r2 = r2 nand r2 //r2 = !r2
+ADD : r5 = r5 + r5	//zero flag set, R5 stays 0
+ADZ : r7 = r4 + r1 //r7 = 12 + 2 = 14
+
+
+SW  : r2's value in r0 + 2 i.e. loc 1 + 2 = 3
+LHI : r2, 1 ;loads value 128
+BEQ : r7,r0 ; 16!= 128. Dont branch
+ADD : R6=R1+R5 ; as r5=0; r1=r6=2
+BEQ : R6,R1, to +2 ; PC=18+3=21 //some error in executing
+
+
+JAL : r2,+4 , R2 = 22; PC =PC +4 =25
+
+JLR : rb=r2, ra=r6 => PC=r2=26, r6=pc+1=24
+
+JAL : r2 ,-2 R2 =26,PC =23;
+LHI : r1,0b100000001	
+LHI : r2,0b100000001
+NDC : r1, r2, r3	//shouldnt execute
+ADD : r3 = r1+r2		//carry set
+NDZ : r1, r2, r3	//shouldn't execute
+NDC : r5 = r6 nand r1	//should execute (0x0018 & 0x8080 = 0xFFFF)
+ADC : r4 = r1+r2	//should execute
+ADI : r3 = r6 + -3 //r3 = 24-3=21
+LHI : r0, 0000 0001 0|000 0000
+SM  : r0, 010101011     //from loc 1 store
+SM  : r0, none		(should goto next instruction)
+LW  : r1, r3 + 5 i.e. from loc 26 i.e. LHI r1 wala instruction
+
+

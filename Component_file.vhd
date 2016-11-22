@@ -353,6 +353,44 @@ port(   IR: in std_logic_vector(15 downto 0);		--IR = InstructionRegister
  );
 end component;
 
+component Control_Hazard is
+	port ( BEQ_bit_4 : in std_logic; --the alu_signal(1) bit
+			JAL_bit_2, JLR_bit_2 : in std_logic;
+			Rd_3, Rd_4 : in std_logic_vector(2 downto 0);
+			mem_read_4 : in std_logic;
+			reset_1, reset_2, reset_3, reset_4 : out std_logic;
+			incrementor_mux_ctrl : out std_logic_vector(1 downto 0);
+			PC_mux_ctrl : out std_logic_vector(1 downto 0);
+			C_en, Z_en : out std_logic );
+end component;
+
+component Data_Hazard is
+	port ( 	Rs1_2, Rs2_2, Rs1_3 : in std_logic_vector(1 downto 0);
+			Rd_3, Rd_4, Rd_5 : in std_logic_vector(1 downto 0); 
+			Load_0_4 : in std_logic;
+			RF_en_3, RF_en_4, RF_en_5 : in std_logic;
+			mem_write_3: in std_logic;
+			DH1, DH2 : out std_logic_vector(1 downto 0);
+			DH3: out std_logic
+			);
+end component;
+
+component Load_hazard is
+	port(
+		Rd_4 : in std_logic_vector(2 downto 0);		
+		Rs1_3, Rs2_3 : in std_logic_vector(2 downto 0);
+		Rs1_dep_3, Rs2_dep_3 : in std_logic;
+		Z_dep_3, Z_en_3: in std_logic;
+		Load_0_4: in std_logic;
+		mem_write_3: in std_logic;		--for removing the case of lw followewd by sw with dependency		
+		Z_mux_ctrl: out std_logic;
+		--Z_en : out std_logic;
+		pipereg_1_en, pipereg_2_en, pipereg_3_en: out std_logic;
+		pc_en: out std_logic;
+		C_en: out std_logic;
+		reset_4: out std_logic	);
+end component;
+
 
 component IITB_RISC_Microprocessor is
 port(

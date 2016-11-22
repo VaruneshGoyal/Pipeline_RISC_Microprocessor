@@ -226,8 +226,9 @@ port(	Rd_in : in std_logic_vector(2 downto 0);
 
 	RF_enable_in,Mem_write_in,Mem_read_in,Dout_mux_cntrl_in:in std_logic;
 	carry_enable_in,zero_enable_in,carry_dep_in,zero_dep_in,alu_output_mux_cntrl_in: in std_logic;
-	alu_cntrl_in ,S2_mux_cntrl_in : in std_logic_vector(1 downto 0);
-	alu_a_input_mux_cntrl_in,S1_mux_cnrtl_in,Load_0_in,Z_mux_cntrl_in:in std_logic;
+	alu_cntrl_in : in std_logic_vector(1 downto 0);
+	S2_mux_cntrl_in:in std_logic;
+	alu_a_input_mux_cntrl_in,Load_0_in:in std_logic;
 	
 	JAL_bit_in,JLR_bit_in:in std_logic;
 
@@ -239,8 +240,9 @@ port(	Rd_in : in std_logic_vector(2 downto 0);
 
 	RF_enable_out,Mem_write_out,Mem_read_out,Dout_mux_cntrl_out: out std_logic;
 	carry_enable_out,zero_enable_out,carry_dep_out,zero_dep_out,alu_output_mux_cntrl_out: out std_logic;
-	alu_cntrl_out ,S2_mux_cntrl_out : out std_logic_vector(1 downto 0);
-	alu_a_input_mux_cntrl_out,S1_mux_cnrtl_out,Load_0_out,Z_mux_cntrl_out:out std_logic;
+	alu_cntrl_out : out std_logic_vector(1 downto 0);
+	S2_mux_cntrl_out:out std_logic;
+	alu_a_input_mux_cntrl_out,Load_0_out:out std_logic;
 
 	JAL_bit_out,JLR_bit_out:out std_logic;
 

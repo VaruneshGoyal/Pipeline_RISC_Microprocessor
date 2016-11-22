@@ -11,6 +11,7 @@ port(   IR: in std_logic_vector(15 downto 0);		--IR = InstructionRegister
 
 		Rs1, Rs2, Rd : out std_logic_vector(2 downto 0);
 		Rf_en : out std_logic;
+		Rs1_dep, Rs2_dep : out std_logic;
 	
 		mem_read, mem_write : out std_logic;
 		Dout_mux_ctrl : out std_logic;    --whether data from mem or from alu_output
@@ -40,7 +41,7 @@ begin
 		variable vRpe_mux_ctrl : std_logic;
 
 		variable vRs1, vRs2, vRd : std_logic_vector(2 downto 0);
-		variable vRf_en : std_logic;
+		variable vRf_en, vRs1_dep, vRs2_dep : std_logic;
 	
 		variable vmem_read, vmem_write : std_logic;
 		variable vDout_mux_ctrl : std_logic;    --whether data from mem or from alu_output
@@ -72,6 +73,8 @@ begin
 		vRs2 :="000"; 
 		vRd :="000";
 		vRf_en := '0';
+		vRs1_dep := '0';
+		vRs2_dep := '0';
 	
 		vmem_read := '0'; 
 		vmem_write := '0';
@@ -105,6 +108,8 @@ begin
 			vRs2 := IR(8 downto 6);
 			vRd := IR(11 downto 9);
 			vRf_en := '1';
+			vRs1_dep := '1';
+			vRs2_dep := '1';
 		
 			vmem_read := '0'; 
 			vmem_write := '0';
@@ -138,6 +143,8 @@ begin
 			vRs2 := IR(8 downto 6);
 			vRd := IR(11 downto 9);
 			vRf_en := '1';
+			vRs1_dep := '0';
+			vRs2_dep := '1';
 		
 			vmem_read := '0'; 
 			vmem_write := '0';
@@ -168,6 +175,8 @@ begin
 			vRs2 := IR(8 downto 6);
 			vRd := IR(11 downto 9);
 			vRf_en := '1';
+			vRs1_dep := '1';
+			vRs2_dep := '1';
 		
 			vmem_read := '0'; 
 			vmem_write := '0';
@@ -201,6 +210,8 @@ begin
 			vRs2 :="000"; 
 			vRd := IR(11 downto 9);
 			vRf_en := '1';
+			vRs1_dep := '0';
+			vRs2_dep := '0';
 		
 			vmem_read := '0'; 
 			vmem_write := '0';
@@ -231,6 +242,8 @@ begin
 			vRs2 := IR(8 downto 6);
 			vRd := IR(11 downto 9);
 			vRf_en := '1';
+			vRs1_dep := '0';
+			vRs2_dep := '1';
 		
 			vmem_read := '1'; 
 			vmem_write := '0';
@@ -261,6 +274,8 @@ begin
 			vRs2 := IR(8 downto 6);
 			vRd := "000";
 			vRf_en := '0';
+			vRs1_dep := '0';		--actually dependent but no need to put stall because of this dependency
+			vRs2_dep := '1';
 		
 			vmem_read := '0'; 
 			vmem_write := '1';
@@ -293,6 +308,8 @@ begin
 			vRs2 :="000"; 
 			vRd := "000";		--dont care case
 			vRf_en := '1' and (not Rpe_zero_checker);
+			vRs1_dep := '1';
+			vRs2_dep := '0';
 		
 			vmem_read := '1'; 
 			vmem_write := '0';
@@ -325,6 +342,8 @@ begin
 			vRs2 :="000"; 
 			vRd := "000";
 			vRf_en := '0';
+			vRs1_dep := '1';
+			vRs2_dep := '0';
 		
 			vmem_read := '0'; 
 			vmem_write := '1' and (not Rpe_zero_checker);
@@ -356,6 +375,8 @@ begin
 			vRs2 :="000"; 
 			vRd := IR(11 downto 9);
 			vRf_en := '1';
+			vRs1_dep := '1';
+			vRs2_dep := '0';
 		
 			vmem_read := '0'; 
 			vmem_write := '0';
@@ -386,6 +407,8 @@ begin
 			vRs2 := "111"; 
 			vRd := IR(11 downto 9);
 			vRf_en := '1';
+			vRs1_dep := '1';
+			vRs2_dep := '1';
 		
 			vmem_read := '0'; 
 			vmem_write := '0';
@@ -416,6 +439,8 @@ begin
 			vRs2 := IR(11 downto 9);
 			vRd := "000";
 			vRf_en := '0';
+			vRs1_dep := '1';
+			vRs2_dep := '1';
 		
 			vmem_read := '0'; 
 			vmem_write := '0';
@@ -450,6 +475,8 @@ begin
 		Rs2 <= vRs2; 
 		Rd <= vRd;
 		Rf_en <= vRf_en;
+		Rs1_dep <= vRs1_dep;
+		Rs2_dep <= vRs2_dep;
 	
 		mem_read <= vmem_read; 
 		mem_write <= vmem_write;

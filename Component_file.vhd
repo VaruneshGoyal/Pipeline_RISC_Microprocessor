@@ -334,6 +334,7 @@ port(   IR: in std_logic_vector(15 downto 0);		--IR = InstructionRegister
 
 		Rs1, Rs2, Rd : out std_logic_vector(2 downto 0);
 		Rf_en : out std_logic;
+		Rs1_dep, Rs2_dep : out std_logic;
 	
 		mem_read, mem_write : out std_logic;
 		Dout_mux_ctrl : out std_logic;    --whether data from mem or from alu_output

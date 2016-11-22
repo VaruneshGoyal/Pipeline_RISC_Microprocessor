@@ -6,7 +6,7 @@ use work.Microprocessor_project.all;
 entity InstructionDecode is
 port(   IR: in std_logic_vector(15 downto 0);		--IR = InstructionRegister
 		Rpe_zero_checker : in std_logic;
-        RdMuxCtrl : out std_logic;
+     	RdMuxCtrl : out std_logic;
 		Rpe_mux_ctrl : out std_logic;
 
 		Rs1, Rs2, Rd : out std_logic_vector(2 downto 0);
@@ -21,10 +21,10 @@ port(   IR: in std_logic_vector(15 downto 0);		--IR = InstructionRegister
 		ALU_a_input_mux_ctrl : out std_logic;
 
 		S2_mux_ctrl : out std_logic;
-		--vS1_mux_ctrl : std_logic_vector(1 downto 0);
+		--S1_mux_ctrl : std_logic_vector(1 downto 0);
 
 		Load_0 : out std_logic;
-		--vZ_mux_ctrl : std_logic;
+		--Z_mux_ctrl : std_logic;
 
 		JAL_bit, JLR_bit, LM_SM_bit : out std_logic
  );
@@ -51,10 +51,10 @@ begin
 		variable vALU_a_input_mux_ctrl : std_logic;
 
 		variable vS2_mux_ctrl : std_logic;
-		variable vS1_mux_ctrl : std_logic_vector(1 downto 0);
+		--variable vS1_mux_ctrl : std_logic_vector(1 downto 0);
 
 		variable vLoad_0 : std_logic;
-		variable vZ_mux_ctrl : std_logic;
+		--variable vZ_mux_ctrl : std_logic;
 
 		variable vJAL_bit, vJLR_bit, vLM_SM_bit : std_logic;
 	
@@ -86,10 +86,10 @@ begin
 		vALU_a_input_mux_ctrl:= '0'; --1 for SE6
 
 		vS2_mux_ctrl:= '0';
-		vS1_mux_ctrl:= "00";
+		--vS1_mux_ctrl:= "00";
 
 		vLoad_0 := '0';				--1 for LW
-		vZ_mux_ctrl := '0';			--probably not needed
+		--vZ_mux_ctrl := '0';			--probably not needed
 
 		vJAL_bit := '0'; 
 		vJLR_bit := '0';
@@ -122,10 +122,10 @@ begin
 			vALU_a_input_mux_ctrl:= '0';	--1 for SE6
 	
 			vS2_mux_ctrl:= '0';
-			vS1_mux_ctrl:= "00";
+			--vS1_mux_ctrl:= "00";
 	
 			vLoad_0 := '0';				--1 for LW
-			vZ_mux_ctrl := '0';			--probably not needed
+			--vZ_mux_ctrl := '0';			--probably not needed
 	
 			vJAL_bit := '0'; 
 			vJLR_bit := '0';
@@ -152,10 +152,10 @@ begin
 			vALU_a_input_mux_ctrl:= '1'; --1 for SE6
 	
 			vS2_mux_ctrl:= '0';
-			vS1_mux_ctrl:= "00";
+			--vS1_mux_ctrl:= "00";
 	
 			vLoad_0 := '0';				--1 for LW
-			vZ_mux_ctrl := '0';			--probably not needed
+			--vZ_mux_ctrl := '0';			--probably not needed
 		
 			vJAL_bit := '0'; 
 			vJLR_bit := '0';
@@ -173,8 +173,8 @@ begin
 			vmem_write := '0';
 			vDout_mux_ctrl := '0';    --whether data from mem(1) or from alu_output(0)
 		
-			vALU_ctrl := "00";			--00 for add, 01 for NAND, 10 for XOR
-			vALU_output_mux_ctrl:= "01"; --00 for Alu output, 01 for SE6, 10 for DE
+			vALU_ctrl := "01";			--00 for add, 01 for NAND, 10 for XOR
+			vALU_output_mux_ctrl:= "00"; --00 for Alu output, 01 for SE6, 10 for DE
 			vC_en:= '1'; 
 			if(IR(0) = '1') then
 				vZ_dep := '1';
@@ -185,10 +185,10 @@ begin
 			vALU_a_input_mux_ctrl:= '0'; --1 for SE6
 	
 			vS2_mux_ctrl:= '0';
-			vS1_mux_ctrl:= "00";
+			--vS1_mux_ctrl:= "00";
 	
 			vLoad_0 := '0';				--1 for LW
-			vZ_mux_ctrl := '0';			--probably not needed
+			--vZ_mux_ctrl := '0';			--probably not needed
 	
 			vJAL_bit := '0'; 
 			vJLR_bit := '0';		
@@ -215,10 +215,10 @@ begin
 			vALU_a_input_mux_ctrl:= '0'; --1 for SE6
 	
 			vS2_mux_ctrl:= '0';
-			vS1_mux_ctrl:= "00";
+			--vS1_mux_ctrl:= "00";
 	
 			vLoad_0 := '0';				--1 for LW
-			vZ_mux_ctrl := '0';			--probably not needed
+			--vZ_mux_ctrl := '0';			--probably not needed
 	
 			vJAL_bit := '0'; 
 			vJLR_bit := '0';
@@ -245,10 +245,10 @@ begin
 			vALU_a_input_mux_ctrl:= '1'; --1 for SE6
 	
 			vS2_mux_ctrl:= '0';
-			vS1_mux_ctrl:= "00";
+			--vS1_mux_ctrl:= "00";
 	
 			vLoad_0 := '1';				--1 for LW
-			vZ_mux_ctrl := '0';			--probably not needed
+			--vZ_mux_ctrl := '0';			--probably not needed
 	
 			vJAL_bit := '0'; 
 			vJLR_bit := '0';
@@ -275,10 +275,10 @@ begin
 			vALU_a_input_mux_ctrl:= '1'; --1 for SE6
 	
 			vS2_mux_ctrl:= '0';
-			vS1_mux_ctrl:= "00";
+			--vS1_mux_ctrl:= "00";
 	
 			vLoad_0 := '0';				--1 for LW
-			vZ_mux_ctrl := '0';			--probably not needed
+			--vZ_mux_ctrl := '0';			--probably not needed
 	
 			vJAL_bit := '0'; 
 			vJLR_bit := '0';
@@ -307,10 +307,10 @@ begin
 			vALU_a_input_mux_ctrl:= '0'; --1 for SE6
 	
 			vS2_mux_ctrl:= '1';			-- +1 to be done
-			vS1_mux_ctrl:= "00";
+			--vS1_mux_ctrl:= "00";
 	
 			vLoad_0 := '0';				--1 for LW
-			vZ_mux_ctrl := '0';			--probably not needed
+			--vZ_mux_ctrl := '0';			--probably not needed
 	
 			vJAL_bit := '0'; 
 			vJLR_bit := '0';
@@ -339,10 +339,10 @@ begin
 			vALU_a_input_mux_ctrl:= '0'; --1 for SE6
 	
 			vS2_mux_ctrl:= '1';				-- +1 to be done
-			vS1_mux_ctrl:= "00";
+			--vS1_mux_ctrl:= "00";
 	
 			vLoad_0 := '0';				--1 for LW
-			vZ_mux_ctrl := '0';			--probably not needed
+			--vZ_mux_ctrl := '0';			--probably not needed
 	
 			vJAL_bit := '0'; 
 			vJLR_bit := '0';
@@ -370,10 +370,10 @@ begin
 			vALU_a_input_mux_ctrl:= '0'; --1 for SE6
 	
 			vS2_mux_ctrl:= '1';				-- +1 to be done
-			vS1_mux_ctrl:= "00";
+			--vS1_mux_ctrl:= "00";
 	
 			vLoad_0 := '0';				--1 for LW
-			vZ_mux_ctrl := '0';			--probably not needed
+			--vZ_mux_ctrl := '0';			--probably not needed
 	
 			vJAL_bit := '1'; 
 			vJLR_bit := '0';
@@ -400,10 +400,10 @@ begin
 			vALU_a_input_mux_ctrl:= '0'; --1 for SE6
 	
 			vS2_mux_ctrl:= '1';				-- +1 to be done
-			vS1_mux_ctrl:= "00";
+			--vS1_mux_ctrl:= "00";
 	
 			vLoad_0 := '0';				--1 for LW
-			vZ_mux_ctrl := '0';			--probably not needed
+			--vZ_mux_ctrl := '0';			--probably not needed
 	
 			vJAL_bit := '0'; 
 			vJLR_bit := '1';
@@ -430,10 +430,10 @@ begin
 			vALU_a_input_mux_ctrl:= '0'; --1 for SE6
 	
 			vS2_mux_ctrl:= '0';
-			vS1_mux_ctrl:= "00";
+			--vS1_mux_ctrl:= "00";
 	
 			vLoad_0 := '0';				--1 for LW
-			vZ_mux_ctrl := '0';			--probably not needed
+			--vZ_mux_ctrl := '0';			--probably not needed
 	
 			vJAL_bit := '0'; 
 			vJLR_bit := '0';

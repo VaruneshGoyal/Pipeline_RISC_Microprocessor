@@ -324,12 +324,32 @@ port(
 
 end component;
 
+component InstructionDecode is
+port(   IR: in std_logic_vector(15 downto 0);		--IR = InstructionRegister
+		Rpe_zero_checker : in std_logic;
+     	RdMuxCtrl : out std_logic;
+		Rpe_mux_ctrl : out std_logic;
 
+		Rs1, Rs2, Rd : out std_logic_vector(2 downto 0);
+		Rf_en : out std_logic;
+	
+		mem_read, mem_write : out std_logic;
+		Dout_mux_ctrl : out std_logic;    --whether data from mem or from alu_output
+	
+		ALU_ctrl : out std_logic_vector(1 downto 0);
+		ALU_output_mux_ctrl : out std_logic_vector(1 downto 0);
+		C_en, C_dep, Z_en, Z_dep : out std_logic; 
+		ALU_a_input_mux_ctrl : out std_logic;
 
+		S2_mux_ctrl : out std_logic;
+		--S1_mux_ctrl : std_logic_vector(1 downto 0);
 
+		Load_0 : out std_logic;
+		--Z_mux_ctrl : std_logic;
 
-
-
+		JAL_bit, JLR_bit, LM_SM_bit : out std_logic
+ );
+end component;
 
 
 component IITB_RISC_Microprocessor is

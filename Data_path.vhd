@@ -8,7 +8,7 @@ use work.Microprocessor_project.all;
 entity Data_path is 
 
 port (clk:in std_logic;
-	reset:in std_logic;
+	reset:in std_logic
 );
 
 
@@ -18,46 +18,115 @@ end Data_path;
 
 architecture Formula_Data_Path of Data_Path is
 
---Register file
-dut_rf :Reg_File port map( A1=>A1_RF, A2=>A2_RF, A3=>A3_RF, R7_data_out=>pc_data_out, R7_data_in=>pc_data_in,
-      		 D1=>D1_RF, D2=>D2_RF, D3=>D3_RF, write_enable=>RF_write_en, clk=>clk,reset =>reset,
-		 pc_enable=>RF_pc_en);
+signal unused_port_16b :std_logic_vector(15 downto 0) := (others =>'Z');
+signal constant_sig_1 :std_logic_vector(15 downto 0) := (0=>'1' , others =>'0');
+--------------PC signals ------------------------
+signal pc_enable:std_logic;
+signal pc_reg_in,pc_reg_out :std_logic_vector(15 downto 0);
+-------------PC_mux_signal -------------------
+signal pc_mux_cntrl :std_logic_vector(1 downto 0);
+---------------PC_adder signals ----------------
+signal pc_adder_out:std_logic_vector(15 downto 0);
+signal pc_adder_carry:std_logic;
+-------------PC_adder_mux_signal -------------------
+signal pc_adder_mux_cntrl :std_logic_vector(1 downto 0);
+signal pc_adder_mux_out :std_logic_vector(15 downto 0);
+----------------Instruction Memory signals ----------
 
+signal Instr_mem_out :std_logic_vector(15 downto 0);
+-------------------------Priority Encoder signal --------
 
---ALU
-dut_alu : ALU port map( X=> alu_mux_upper_out,Y=>alu_mux_lower_out,
-      			Z =>alu_output,
-     			carry_flag=>alu_carry_flag,zero_flag=>alu_zero_flag,
-     		        Control_bits(0)=> alu_cntrl0,Control_bits(1)=> alu_cntrl1);
+signal pe_out :std_logic_vector(2 downto 0);
+------------------------Priority modify logic modify signals
 
--- Memory
-dut_memory :Memory port map (Din=> t1_output,
-			Dout => mem_data_output,
-			write_enable=>mem_write_en,
-			read_enable=>mem_read_en,clk=>clk,
-			Addr=>  mem_addr_mux_output);
+signal pe_modify_logic_out:std_logic_vector(7 downto 0);
 
+---------------Instruction_mem_mux signals
 
---inst_addr <- R7, dedicated +1 unit
---IF/ID reg : contains just the instruction fetched
+signal Instr_mem_mux_out:std_logic_vector(8 downto 0);
 
+-----------------------Pipeline 1 signals -------------------
+signal Pipe1_Instr_out,Pipe1_PC_out :std_logic_vector(15 downto 0);
+signal pipe1_enable,pipe1_imm_data_enable:std_logic;
 
---ID/RR reg : opcode, Rs1-code, Rs2-code, Rd-code, Mem-write-en, Mem-read-en, Alu-instruction, Rf-write-en, Immediate data
+begin
+-----------------------PC register ---------------------
+	dut_pc: DataRegister
+		generic map(data_width=>16);
+		port map(Din => pc_reg_in,
+		      Dout=>pc_reg_out,
+		      clk => clk, enable=>pc_enable,reset => reset);
+--#############-----------------PC _MUX -------------------------------------
 
+	dut_pc_mux: Data_MUX 
+		generic map (control_bit_width =>2);
+		port(Din(0) =>pc_adder_out ,Din(1)=> ,Din(2)=>, Din(3) => unused_port_16b,
+			Dout =>pc_reg_in,
+			control_bits => pc_mux_cntrl
+		);
 
---RR/EX reg : opcode, Rs1, Rs2, Rd-code, Mem-write-en, Mem-read-en, Alu-instruction, Rf-write-en, Immediate-data
+-- -----------------PC_adder-------------------------
+	dut_pc_adder: ALU_adder 
+	port map(  
+		x =>pc_adder_mux_out ,y => pc_reg_out,
+		c_in =>'0',
+		s => pc_adder_out,
+	       	c_out => pc_adder_carry
+	 );
 
+---#####------------------------PC_adder_mux ----------------
 
---EX/MEM reg : opcode, Alu-output (=mem_addr), Rs1(data for store), Rd-code, Mem-write-en, Mem-read-en, Alu-instruction, Rf-write-en
+	dut_pc_adder_mux: Data_MUX 
+			generic map (control_bit_width =>2);
+			port map(Din(0) =>constant_sig_1 ,Din(1)=> ,Din(2)=>, Din(3) => ,
+				Dout =>pc_adder_mux_out,
+				control_bits => pc_adder_mux_cntrl
+			);
+-------------------------Instruction mem------------------
+	dut_instruction_mem: Memory 
+	port map ( Din => unused_port_16b,
+		Dout => Instr_mem_out,
+		write_enable =>'0',read_enable =>'1',clk =>clk,
+		Addr => pc_reg_out
+	);
+---------------Instruction_mem_mux------------------------
+	
+	component Data_MUX_9 is
+	generic map (control_bit_width =>1);
+	port(Din(0) => Instr_mem_out(8 downto 0),Din(1)(7 downto 0) =>pe_modify_logic_out,Din(1)(8) => pe_modify_logic_out(7),
+		Dout=>Instr_mem_mux_out,
+		control_bits => Instr_mem_mux_cntrl
+	);
+	
+ -----------------------PE-----------
+	
+	dut_pe: priority_encoder 
+	port map(  
+		x => Pipe1_Instr_out(8 downto 0),
+		y =>pe_out
+	    	 );
+------------PE_modify_logic ------------
+	dut_pe_modify_logic:  encode_modifier 
+	port map( encode_bits =>pe_out,
+	      priority_bits_in  => Pipe1_Instr_out(8 downto 0),
+	      priority_bits_out	=> pe_modify_logic_out
+		);
+---------------------------------------------------------
+--------------------PipeLine Register 1 -----------------
+---------------------------------------------------------
 
+dut_pipeline_reg1: pipeline_reg1 is
 
---MEM/WB reg : opcode, Rd-code, Rf-write-en, Result (can be data from mem or Alu-output)
+port map(
+	Instr_in(15 downto 9) => Instr_mem_out(15 downto 9),
+	Instr_in(8 downto 0) => Instr_mem_mux_out
+	Pc_in =>pc_reg_out,
 
+	Instr_out => Pipe1_Instr_out,
+	Pc_out =>Pipe1_PC_out,
 
---Hazard Detectors
+	clk =>clk,enable => pipe1_enable,imm_data_enable => pipe1_imm_data_enable,reset=>reset);
 
-
---other things required : Carry flag, Zero flag
 
 
 

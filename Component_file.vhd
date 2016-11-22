@@ -9,6 +9,7 @@ type Data_in is array (natural range <>) of std_logic_vector(15 downto 0);
 type Data_in_2 is array (natural range <>) of std_logic_vector(1 downto 0);
 type Data_in_3 is array (natural range <>) of std_logic_vector(2 downto 0);
 type Data_in_8 is array (natural range <>) of std_logic_vector(7 downto 0);
+type Data_in_9 is array (natural range <>) of std_logic_vector(8 downto 0);
 type Data_in_1 is array (natural range <>) of std_logic_vector(0 downto 0);
 --type FsmState is ( instruction_fetch, S2, S3, S4, S40, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14);
 
@@ -162,7 +163,13 @@ port(Din:in Data_in_2( (2**control_bit_width)-1 downto 0);
 );
 end component;
 
-
+component Data_MUX_9 is
+generic (control_bit_width:integer);
+port(Din:in Data_in_9( (2**control_bit_width)-1 downto 0);
+	Dout:out std_logic_vector(9 downto 0);
+	control_bits:in std_logic_vector(control_bit_width-1 downto 0)
+);
+end component;
 
 --data extender
 component data_extender_9to16 is

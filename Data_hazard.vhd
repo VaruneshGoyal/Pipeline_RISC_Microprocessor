@@ -6,8 +6,8 @@ use work.Microprocessor_project.all;
 --!!Need to put one more forwarding at output of alu...in case of SW after LW from same register
 
 entity Data_Hazard is
-	port ( 	Rs1_2, Rs2_2, Rs1_3 : in std_logic_vector(1 downto 0);
-			Rd_3, Rd_4, Rd_5 : in std_logic_vector(1 downto 0); 
+	port ( 	Rs1_2, Rs2_2, Rs1_3 : in std_logic_vector(2 downto 0);
+			Rd_3, Rd_4, Rd_5 : in std_logic_vector(2 downto 0); 
 			Load_0_4 : in std_logic;
 			RF_en_3, RF_en_4, RF_en_5 : in std_logic;
 			mem_write_3: in std_logic;

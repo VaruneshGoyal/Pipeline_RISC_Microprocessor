@@ -42,7 +42,7 @@ signal pe_out :std_logic_vector(2 downto 0);
 signal pe_modify_logic_out:std_logic_vector(7 downto 0);
 
 ---------------PE_mux signals
-signal PE_mux_cntrl : std_logic;
+signal PE_mux_cntrl : std_logic_vector(0 downto 0);
 signal PE_mux_out:std_logic_vector(8 downto 0);
 -------------------------------------------------------------
 -----------------------Pipeline 1 signals -------------------
@@ -52,7 +52,7 @@ signal pipe1_enable,pipe1_imm_data_enable, pipe1_reset:std_logic;
 
 ----------------------------Instruction Decoder signals -------
 
-signal Rd_mux_cntrl:std_logic;
+signal Rd_mux_cntrl:std_logic_vector(0 downto 0);
 signal Rs1_stage2 , Rs2_stage2 ,Rd_stage2 :std_logic_vector(2 downto 0);
 signal  RF_enable_stage2 ,mem_read_stage2, mem_write_stage2: std_logic;
 signal Dout_mux_cntrl_stage2:std_logic;
@@ -75,7 +75,8 @@ signal Pipe2_Imm9_out:std_logic_vector(8 downto 0);
 signal Pipe2_PC_out : std_logic_vector(15 downto 0);
 signal RF_enable_stage3,mem_write_stage3,mem_read_stage3, Dout_mux_cntrl_stage3 :std_logic;
 signal C_en_stage3 , Z_en_stage3 , C_dep_stage3, Z_dep_stage3 : std_logic;
-signal ALU_a_input_mux_cntrl_stage3,S2_mux_cntrl_stage3:std_logic;
+signal ALU_a_input_mux_cntrl_stage3:std_logic;
+signal S2_mux_cntrl_stage3 : std_logic_vector(0 downto 0);
 signal ALU_cntrl_stage3,ALU_output_mux_cntrl_stage3:std_logic_vector(1 downto 0);
 signal Load_0_stage3,JAL_bit_stage3, JLR_bit_stage3 :std_logic;
 signal pipe2_enable,pipe2_reset :std_logic;
@@ -112,7 +113,7 @@ signal Pipe3_Imm9_out:std_logic_vector(8 downto 0);
 signal S1_stage4 , S2_stage4 : std_logic_vector( 15 downto 0);
 signal RF_enable_stage4, mem_write_stage4, mem_read_stage4, Dout_mux_cntrl_stage4 :std_logic;
 signal C_en_stage4, Z_en_stage4, C_dep_stage4, Z_dep_stage4 : std_logic;
-signal ALU_a_input_mux_cntrl_stage4:std_logic;
+signal ALU_a_input_mux_cntrl_stage4:std_logic_vector(0 downto 0);
 signal ALU_cntrl_stage4,ALU_output_mux_cntrl_stage4:std_logic_vector(1 downto 0);
 signal Load_0_stage4:std_logic;
 signal pipe3_enable,pipe3_reset :std_logic;
@@ -125,19 +126,20 @@ signal DE_output: std_logic_vector(15 downto 0);
 signal alu_a_input_mux_stage4_output: std_logic_vector(15 downto 0);
 ----------------------------alu signals-----------------------
 signal ALU_output: std_logic_vector(15 downto 0);
-signal alu_carry_flag_output_stage4,alu_zero_flag_output_stage4: std_logic;
+signal alu_carry_flag_output_stage4: std_logic;
+signal alu_zero_flag_output_stage4 : std_logic_vector(0 downto 0);
 ---------------------------alu_output_mux---------------------
 signal alu_output_mux_stage4_output :std_logic_vector(15 downto 0);
 ------------------------carry register signals---------------
 signal carry_reg_output: std_logic;
 ----------------------------zero_input_mux signals
-signal zero_reg_input_mux_output: std_logic;
-signal zero_reg_input_mux_control_bit: std_logic;
+signal zero_reg_input_mux_output: std_logic_vector(0 downto 0);
+signal zero_reg_input_mux_control_bit: std_logic_vector(0 downto 0);
 -----------------------------zero register signals-------
 signal zero_reg_output: std_logic;
 -----------------------------Data Hazard 3 Mux signals
 signal DH3_mux_output: std_logic_vector(15 downto 0); 
-signal DH3_control_bit:std_logic;
+signal DH3_control_bit:std_logic_vector(0 downto 0);
 ------------------------------------------------------------
 ------------------------------pipeline 4 signals----------
 -------------------------------------------------------------
@@ -145,15 +147,17 @@ signal pipe4_enable : std_logic := '1';
 signal pipe4_reset :std_logic;
 signal Rd_stage5,Rs1_stage5,Rs2_stage5 :std_logic_vector(2 downto 0);
 signal S1_stage5 : std_logic_vector( 15 downto 0);
-signal RF_enable_stage5, mem_write_stage5, mem_read_stage5, Dout_mux_cntrl_stage5 :std_logic;
+signal RF_enable_stage5, mem_write_stage5, mem_read_stage5 :std_logic; 
+signal Dout_mux_cntrl_stage5 :std_logic_vector(0 downto 0);
 signal Load_0_stage5, alu_z_output_stage5: std_logic;
 signal alu_result_out_stage5: std_logic_vector(15 downto 0);
+signal alu_z_output_in_pipe4 : std_logic;
 ------------------------------Data memory signal---------------
 signal Data_mem_out :std_logic_vector(15 downto 0);
 ------------------------------Dout mux-------------------------
 signal Dout_mux_out :std_logic_vector(15 downto 0);
 ------------------------------Data_mem zero checker------------
-signal Data_mem_zero_checker_output : std_logic;
+signal Data_mem_zero_checker_output : std_logic_vector(0 downto 0);
 
 -----------------------------------------------------------
 -------------------------Pipeline 5 signals ---------------
@@ -233,13 +237,13 @@ begin
 	
 	dut_pe: priority_encoder 
 	port map(  
-		x => Pipe1_Instr_out(8 downto 0),
+		x => Pipe1_Instr_out(7 downto 0),
 		y =>pe_out
 	    	 );
 ------------PE_modify_logic ------------
 	dut_pe_modify_logic:  encode_modifier 
 	port map( encode_bits =>pe_out,
-	      priority_bits_in  => Pipe1_Instr_out(8 downto 0),
+	      priority_bits_in  => Pipe1_Instr_out(7 downto 0),
 	      priority_bits_out	=> pe_modify_logic_out
 		);
 ---------------------------------------------------------
@@ -262,8 +266,8 @@ port map(
 	dut_Instr_dec: InstructionDecode 
 	port map(   IR => Pipe1_Instr_out,		--IR = InstructionRegister
 			Rpe_zero_checker  => rpe_zero_checker_output,
-	     		RdMuxCtrl  => Rd_mux_cntrl,
-			Rpe_mux_ctrl=>PE_mux_cntrl,
+	     		RdMuxCtrl  => Rd_mux_cntrl(0),
+			Rpe_mux_ctrl=>PE_mux_cntrl(0),
 
 			Rs1 => Rs1_stage2, Rs2 => Rs2_stage2, Rd=> Rd_stage2 ,
 			Rf_en => RF_enable_stage2,
@@ -345,7 +349,7 @@ port map(	Rd_in => Rd_mux_out,
 	alu_output_mux_cntrl_out => ALU_output_mux_cntrl_stage3,
 
 	alu_cntrl_out=> ALU_cntrl_stage3,
-	S2_mux_cntrl_out => S2_mux_cntrl_stage3,
+	S2_mux_cntrl_out => S2_mux_cntrl_stage3(0),
 
 	alu_a_input_mux_cntrl_out=> ALU_a_input_mux_cntrl_stage3,
 	Load_0_out => Load_0_stage3,
@@ -445,7 +449,7 @@ port map(	Rd_in => Rd_mux_out,
 		alu_output_mux_cntrl_out=> ALU_output_mux_cntrl_stage4,
 		alu_cntrl_out=> ALU_cntrl_stage4,
 	
-		alu_a_input_mux_cntrl_out=>ALU_a_input_mux_cntrl_stage4,
+		alu_a_input_mux_cntrl_out=>ALU_a_input_mux_cntrl_stage4(0),
 		Load_0_out=>Load_0_stage4,
 		Rs1_dep_out=>Rs1_dep_stage4,
 		Rs2_dep_out=>Rs2_dep_stage4,
@@ -477,7 +481,7 @@ port map(	Rd_in => Rd_mux_out,
 	dut_ALU: ALU
 	port map(X=>alu_a_input_mux_stage4_output,Y=>S2_stage4,
 	      Z=>ALU_output,
-	      carry_flag => alu_carry_flag_output_stage4,zero_flag=>alu_zero_flag_output_stage4,
+	      carry_flag => alu_carry_flag_output_stage4,zero_flag=>alu_zero_flag_output_stage4(0),
 	      Control_bits=>ALU_cntrl_stage4
 	      
 	 );
@@ -498,16 +502,17 @@ port map(	Rd_in => Rd_mux_out,
 		reset=>reset
 		);
 -------------------------------------------------zero_reg_input_mux---------------
-	dut_zero_reg_input_mux: Data_MUX 
+	dut_zero_reg_input_mux: Data_MUX_1 
 	generic map (control_bit_width => 1)
-	port map(Din(0)=>alu_zero_flag_output_stage4, Din(1) =>Data_mem_zero_checker_output,
+	port map(Din(0)=>alu_zero_flag_output_stage4, 
+		Din(1) =>Data_mem_zero_checker_output,
 		Dout => zero_reg_input_mux_output,
 		control_bits => zero_reg_input_mux_control_bit
 	);
 -------------------------------------------------zero register---------------------
 	dut_zero_reg: DataRegister 
 	generic map(data_width => 1)
-	port map (Din(0)=>zero_reg_input_mux_output,
+	port map (Din(0)=>zero_reg_input_mux_output(0),
 	      Dout(0)=>zero_reg_output,
 	      clk=>clk,
 		enable=>C_en_control_hazard,--!!!!Wrong
@@ -523,6 +528,7 @@ port map(	Rd_in => Rd_mux_out,
 ---------------------------------------------------------------------------
 -----------------------------Pipeline 4 ----------------------------------
 ---------------------------------------------------------------------------
+alu_z_output_in_pipe4 <= alu_zero_flag_output_stage4(0) and ALU_cntrl_stage4(1);
 
 	dut_pipe4: pipeline_reg4
 		port map(
@@ -537,8 +543,8 @@ port map(	Rd_in => Rd_mux_out,
 			Dout_mux_cntrl_in=>Dout_mux_cntrl_stage4,
 			Load_0_in=>Load_0_stage4,
 			alu_result_in=>alu_output_mux_stage4_output,
-			alu_z_output_in=>(alu_zero_flag_output_stage4 and ALU_cntrl_stage4(1)), --for beq
-
+			--alu_z_output_in=>(alu_zero_flag_output_stage4(0) and ALU_cntrl_stage4(1)), --for beq
+			alu_z_output_in => alu_z_output_in_pipe4,
 			--alu_cntrl_1_out=>## useless,
 			Rd_out=> Rd_stage5,
 			Rs1_out=>Rs1_stage5,
@@ -547,7 +553,7 @@ port map(	Rd_in => Rd_mux_out,
 			RF_enable_out=>RF_enable_stage5,
 			Mem_write_out=>mem_write_stage5,
 			Mem_read_out=>mem_read_stage5,
-			Dout_mux_cntrl_out=>Dout_mux_cntrl_stage5,
+			Dout_mux_cntrl_out=>Dout_mux_cntrl_stage5(0),
 			Load_0_out=>Load_0_stage5,
 			alu_result_out=>alu_result_out_stage5,
 			alu_z_output_out=>alu_z_output_stage5,
@@ -576,7 +582,7 @@ port map(	Rd_in => Rd_mux_out,
 -----------------------------------------Data_mem zero checker--------------------
 	dut_data_mem_zero_checker: zero_checker
 	port map ( X => Data_mem_out,
-	      Z => Data_mem_zero_checker_output
+	      Z => Data_mem_zero_checker_output(0)
 	 );
 
 ---------------------------------------------------------------------------
@@ -634,7 +640,7 @@ dut_data_hazard : Data_Hazard
 			RF_en_3 => RF_enable_stage4, RF_en_4 => RF_enable_stage5, RF_en_5 => RF_enable_stage6,
 			mem_write_3 => mem_write_stage4,
 			DH1 => DH1_control_bits, DH2 =>DH2_control_bits,
-			DH3 => DH3_control_bit
+			DH3 => DH3_control_bit(0)
 		);
 
 dut_load_hazard : Load_hazard 
@@ -645,7 +651,7 @@ dut_load_hazard : Load_hazard
 			Z_dep_3 => Z_dep_stage4, Z_en_3 => Z_en_stage4,
 			Load_0_4 => Load_0_stage5,
 			mem_write_3=> mem_write_stage4,		--for removing the case of lw followed by sw with dependency		
-			Z_mux_ctrl => zero_reg_input_mux_control_bit,
+			Z_mux_ctrl => zero_reg_input_mux_control_bit(0),
 			pipereg_1_en => pipe1_enable, pipereg_2_en => pipe2_enable, pipereg_3_en => pipe3_enable,
 			pc_en => pc_enable,
 			C_en => C_en_load_hazard,

@@ -14,7 +14,8 @@ port(
 	S1_in, S2_in: in std_logic_vector( 15 downto 0);
 	Imm9_in :in std_logic_vector( 8 downto 0);
 	RF_enable_in,Mem_write_in,Mem_read_in,Dout_mux_cntrl_in:in std_logic;
-	carry_enable_in,zero_enable_in,carry_dep_in,zero_dep_in,alu_output_mux_cntrl_in: in std_logic;
+	carry_enable_in,zero_enable_in,carry_dep_in,zero_dep_in: in std_logic;
+	alu_output_mux_cntrl_in : in std_logic_vector(1 downto 0);
 	alu_cntrl_in: in std_logic_vector(1 downto 0);
 	alu_a_input_mux_cntrl_in,Load_0_in:in std_logic;
 	Rs1_dep_in,Rs2_dep_in:in std_logic;
@@ -26,7 +27,8 @@ port(
 	Imm9_out:out std_logic_vector( 8 downto 0);
 	S1_out, S2_out: out std_logic_vector( 15 downto 0);
 	RF_enable_out,Mem_write_out,Mem_read_out,Dout_mux_cntrl_out: out std_logic;
-	carry_enable_out,zero_enable_out,carry_dep_out,zero_dep_out,alu_output_mux_cntrl_out: out std_logic;
+	carry_enable_out,zero_enable_out,carry_dep_out,zero_dep_out: out std_logic;
+	alu_output_mux_cntrl_out : in std_logic_vector(1 downto 0);
 	alu_cntrl_out: out std_logic_vector(1 downto 0);
 	
 	alu_a_input_mux_cntrl_out,Load_0_out:out std_logic;

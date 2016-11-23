@@ -16,8 +16,8 @@ port(
 	RF_enable_in,Mem_write_in,Mem_read_in,Dout_mux_cntrl_in:in std_logic;
 	carry_enable_in,zero_enable_in,carry_dep_in,zero_dep_in,alu_output_mux_cntrl_in: in std_logic;
 	alu_cntrl_in: in std_logic_vector(1 downto 0);
-	alu_a_input_mux_cntrl_in,Load_0_in,Z_mux_cntrl_in:in std_logic;
-	JLR_bit_in:in std_logic;
+	alu_a_input_mux_cntrl_in,Load_0_in:in std_logic;
+	Rs1_dep_in,Rs2_dep_in:in std_logic;
 
 
 	Rd_out : out std_logic_vector(2 downto 0);
@@ -29,8 +29,8 @@ port(
 	carry_enable_out,zero_enable_out,carry_dep_out,zero_dep_out,alu_output_mux_cntrl_out: out std_logic;
 	alu_cntrl_out: out std_logic_vector(1 downto 0);
 	
-	alu_a_input_mux_cntrl_out,Load_0_out,Z_mux_cntrl_out:out std_logic;
-	JLR_bit_out: out std_logic;
+	alu_a_input_mux_cntrl_out,Load_0_out:out std_logic;
+	Rs1_dep_out,Rs2_dep_out:out std_logic;
 
 	clk,enable,reset :in std_logic
 );
@@ -54,11 +54,13 @@ begin
 			port map (Din=> Rs1_in,
 			      Dout => Rs1_out,
 			      clk=>clk, enable=>enable,reset=>reset);
+
 	dut_rs2_reg: DataRegister
-		generic map(data_width=>3)
-		port map (Din=> Rs2_in,
-		      Dout => Rs2_out,
-		      clk=>clk, enable=>enable,reset=>reset);
+			generic map(data_width=>3)
+			port map (Din=> Rs2_in,
+			      Dout => Rs2_out,
+			      clk=>clk, enable=>enable,reset=>reset);
+
 
 	dut_S1_reg: DataRegister
 			generic map(data_width=>16)
@@ -108,13 +110,13 @@ begin
 
 	dut_Load_0_out_reg: DataRegister generic map(data_width=>1)port map (Din(0)=> Load_0_in,Dout(0) =>Load_0_out,clk=>clk, enable=>enable,reset=>reset);
 
-	dut_Z_mux_cntrl_reg: DataRegister generic map(data_width=>1)port map (Din(0)=>Z_mux_cntrl_in,Dout(0) =>Z_mux_cntrl_out,clk=>clk, enable=>enable,reset=>reset);
+	
+---------------------------------------------------------------------------
 
+	dut_Rs1_dep_bit_reg: DataRegister generic map(data_width=>1)port map (Din(0)=>Rs1_dep_in,Dout(0) =>Rs1_dep_out,clk=>clk, enable=>enable,reset=>reset);
 
---------------------------------------------------------------
+	dut_Rs2_dep_bit_reg: DataRegister generic map(data_width=>1)port map (Din(0)=>Rs2_dep_in,Dout(0) =>Rs2_dep_out,clk=>clk, enable=>enable,reset=>reset);
 
-
-	dut_JLR_bit_reg: DataRegister generic map(data_width=>1)port map (Din(0)=>JLR_bit_in,Dout(0) =>JLR_bit_out,clk=>clk, enable=>enable,reset=>reset);
 
 
 -------------------------------------------------------------------------------------

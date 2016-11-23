@@ -74,11 +74,10 @@ component Reg_File is
 
 port( A1,A2,A3: in std_logic_vector(2 downto 0);
       D1, D2: out std_logic_vector(15 downto 0);
-      write_enable,clk, reset: in std_logic;
-      pc_enable:in std_logic;
+      write_enable,clk,reset: in std_logic;
       D3: in std_logic_vector( 15 downto 0);
-      R7_data_in : in std_logic_vector(15 downto 0);
-      R7_data_out : out std_logic_vector(15 downto 0)
+      PC_data_in : in std_logic_vector(15 downto 0)
+      
 );
 end component;
 
@@ -227,9 +226,9 @@ port(	Rd_in : in std_logic_vector(2 downto 0);
 	RF_enable_in,Mem_write_in,Mem_read_in,Dout_mux_cntrl_in:in std_logic;
 	carry_enable_in,zero_enable_in,carry_dep_in,zero_dep_in,alu_output_mux_cntrl_in: in std_logic;
 	alu_cntrl_in : in std_logic_vector(1 downto 0);
-	S2_mux_cntrl_in:in std_logic;
+	S2_mux_cntrl_in :in std_logic;
 	alu_a_input_mux_cntrl_in,Load_0_in:in std_logic;
-	
+	Rs1_dep_in,Rs2_dep_in:in std_logic;
 	JAL_bit_in,JLR_bit_in:in std_logic;
 
 	Rd_out : out std_logic_vector(2 downto 0);
@@ -241,9 +240,9 @@ port(	Rd_in : in std_logic_vector(2 downto 0);
 	RF_enable_out,Mem_write_out,Mem_read_out,Dout_mux_cntrl_out: out std_logic;
 	carry_enable_out,zero_enable_out,carry_dep_out,zero_dep_out,alu_output_mux_cntrl_out: out std_logic;
 	alu_cntrl_out : out std_logic_vector(1 downto 0);
-	S2_mux_cntrl_out:out std_logic;
+	S2_mux_cntrl_out :out std_logic;
 	alu_a_input_mux_cntrl_out,Load_0_out:out std_logic;
-
+	Rs1_dep_out,Rs2_dep_out:out std_logic;
 	JAL_bit_out,JLR_bit_out:out std_logic;
 
 	clk,enable,reset :in std_logic
@@ -262,8 +261,8 @@ port(
 	RF_enable_in,Mem_write_in,Mem_read_in,Dout_mux_cntrl_in:in std_logic;
 	carry_enable_in,zero_enable_in,carry_dep_in,zero_dep_in,alu_output_mux_cntrl_in: in std_logic;
 	alu_cntrl_in: in std_logic_vector(1 downto 0);
-	alu_a_input_mux_cntrl_in,Load_0_in,Z_mux_cntrl_in:in std_logic;
-	JLR_bit_in:in std_logic;
+	alu_a_input_mux_cntrl_in,Load_0_in:in std_logic;
+	Rs1_dep_in,Rs2_dep_in:in std_logic;
 
 
 	Rd_out : out std_logic_vector(2 downto 0);
@@ -275,12 +274,11 @@ port(
 	carry_enable_out,zero_enable_out,carry_dep_out,zero_dep_out,alu_output_mux_cntrl_out: out std_logic;
 	alu_cntrl_out: out std_logic_vector(1 downto 0);
 	
-	alu_a_input_mux_cntrl_out,Load_0_out,Z_mux_cntrl_out:out std_logic;
-	JLR_bit_out: out std_logic;
+	alu_a_input_mux_cntrl_out,Load_0_out:out std_logic;
+	Rs1_dep_out,Rs2_dep_out:out std_logic;
 
 	clk,enable,reset :in std_logic
 );
-
 
 end component;
 

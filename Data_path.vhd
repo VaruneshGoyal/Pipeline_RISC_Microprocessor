@@ -60,7 +60,7 @@ signal ALU_cntrl_stage2,ALU_output_mux_cntrl_stage2: std_logic_vector(1 downto 0
 signal C_en_stage2 , Z_en_stage2 , C_dep_stage2, Z_dep_stage2 : std_logic;
 signal ALU_a_input_mux_cntrl_stage2,S2_mux_cntrl_stage2:std_logic;
 signal Load_0_stage2,JAL_bit_stage2, JLR_bit_stage2,  LM_SM_bit_stage2:std_logic;
-
+signal Rs1_dep_stage2,Rs2_dep_stage2:std_logic;
 -------------------- rpe zero checker signals----------------------
 
 signal rpe_zero_checker_output :std_logic;
@@ -79,19 +79,51 @@ signal ALU_a_input_mux_cntrl_stage3,S2_mux_cntrl_stage3:std_logic;
 signal ALU_cntrl_stage3,ALU_output_mux_cntrl_stage3:std_logic_vector(1 downto 0);
 signal Load_0_stage3,JAL_bit_stage3, JLR_bit_stage3 :std_logic;
 signal pipe2_enable,pipe2_reset :std_logic;
+signal Rs1_dep_stage3, Rs2_dep_stage3:std_logic;
 
 
+---------------------------Register File -----------------------
+
+signal D1_output,D2_output :std_logic_vector(15 downto 0);
+ -------------------------SE 9 signals
+
+signal SE9_output : std_logic_vector(15 downto 0);
 	
-	
-	
-	
+---------------------------Data Hazard MuX 1 signal	
 
+signal DH1_mux_output: std_logic_vector(15 downto 0);
 
+---------------------------S2 mux stage 3
 
+signal S2_mux_stage3_output : std_logic_vector( 15 downto 0);	
 
+------------------------- Data Hazard Mux 2 signals
 
+signal DH2_mux_output :std_logic_vector(15 downto 0);
 
+-----------------------------------------------------------
+-------------------------Pipeline 3 signals ---------------
+----------------------------------------------------------
 
+signal Rd_stage4,Rs1_stage4,Rs2_stage4 :std_logic_vector(2 downto 0);
+signal Pipe3_Imm9_out:std_logic_vector(8 downto 0)
+signal S1_stage4 , S2_stage4 : std_logic_vector( 15 downto 0);
+signal RF_enable_stage4, mem_write_stage4, mem_read_stage4, Dout_mux_cntrl_stage4 :std_logic;
+signal C_en_stage4, Z_en_stage4, C_dep_stage4, Z_dep_stage4 : std_logic;
+signal ALU_a_input_mux_cntrl_stage4:std_logic;
+signal ALU_cntrl_stage4,ALU_output_mux_cntrl_stage4:std_logic_vector(1 downto 0);
+signal Load_0_stage4,:std_logic;
+signal pipe3_enable,pipe3_reset :std_logic;
+signal Rs1_dep_stage4, Rs2_dep_stage4:std_logic;
+----------------------------SE6 signals
+signal SE6_output: std_logic_vector(15 downto 0);
+------------------------------DE signals
+signal DE_output: std_logic_vector(15 downto 0);
+-----------------------------alu_a_input_mux_stage4 signals--------
+signal alu_a_input_mux_stage4_output: std_logic_vector(15 downto 0);
+----------------------------alu signals-----------------------
+signal ALU_output: std_logic_vector(15 downto 0);
+signal alu_carry_flag_output_stage4,alu_zero_flag_output_stage4: std_logic;
 
 
 
@@ -134,7 +166,7 @@ begin
 
 	dut_pc_adder_mux: Data_MUX 
 			generic map (control_bit_width =>2);
-			port map(Din(0) =>constant_sig_1 ,Din(1)=> ,Din(2)=>, Din(3) => ## alu output from pipeline4,
+			port map(Din(0) =>constant_sig_1 ,Din(1)=> SE9_output,Din(2)=> ##, Din(3) => ## alu output from pipeline4,
 				Dout =>pc_adder_mux_out,
 				control_bits => pc_adder_mux_cntrl
 			);
@@ -206,7 +238,7 @@ port map(
 
 			Load_0 => Load_0_stage2,
 			--Z_mux_ctrl : std_logic;
-
+			Rs1_dep=> Rs1_dep_stage2, Rs2_dep=>Rs2_dep_stage2 ,
 			JAL_bit => JAL_bit_stage2, JLR_bit=> JLR_bit_stage2, LM_SM_bit => LM_SM_bit_stage2  );
 ------------------------zero checker -----------------------
 	dut_zero_checker: zero_checker is
@@ -236,7 +268,7 @@ port map(	Rd_in => Rd_mux_out,
 	Pc_in : Pipe1_PC_out( 15 downto 0),
 
 	RF_enable_in => RF_enable_stage2,
-	Mem_write_in => mem_write_stage2mem_read_stage2,
+	Mem_write_in => mem_write_stage2,
 	Mem_read_in => mem_read_stage2,
 	Dout_mux_cntrl_in=>Dout_mux_cntrl_stage2,
 	carry_enable_in => C_en_stage2,
@@ -248,7 +280,7 @@ port map(	Rd_in => Rd_mux_out,
 	S2_mux_cntrl_in =>  S2_mux_cntrl_stage2
 	alu_a_input_mux_cntrl_in =>  ALU_a_input_mux_cntrl_stage2,
 	Load_0_in => Load_0_stage2,
-	
+	Rs1_dep_in => Rs1_dep_stage2,Rs2_dep_in =>Rs2_dep_stage2,
 	
 	JAL_bit_in => JAL_bit_stage2,
 	JLR_bit_in => JAL_bit_stage2,
@@ -274,15 +306,138 @@ port map(	Rd_in => Rd_mux_out,
 
 	alu_a_input_mux_cntrl_out=> ALU_a_input_mux_cntrl_stage3,
 	Load_0_out => Load_0_stage3,
-
+	Rs1_dep_out => Rs1_dep_stage3,Rs2_dep_out => Rs2_dep_stage3,
 	JAL_bit_out => JAL_bit_stage3,
 	JLR_bit_out => JAL_bit_stage3,
 
 	clk =>clk,enable=> pipe2_enable,reset => pipe2_reset
 );
 
+-----------------------Register FIle------------------------------------
+
+	dut_regfile:  Reg_File 
+
+	port map( A1 =>Rs1_stage3,A2 => Rs2_stage3,A3 => ###,
+	      D1 => D1_output, D2 => D2_output,
+	      write_enable => ###,clk => clk, reset => reset,
+	      D3 => ##
+      	      PC_data_in => Pipe2_PC_out
+      
+
+	);
+-------------------------SE 9---------------------------------
+
+	dut_SE9 : sign_extender_9to16 
+	port map(
+		x => Pipe2_Imm9_out,
+		y => SE9_output
+	);
+----###------------------ Data Hazard 1 MUX -----------------------
+
+	dut_DH_mux1 : Data_MUX 
+	generic map (control_bit_width => 2)
+	port map(Din(0) =>D1_output, Din(1) =>##,Din(2) =>##,Din(3) =>## ,
+		Dout => DH1_mux_output,
+		control_bits => ##
+	);
+
+----------------------S2 mux_ stage3 --------------------
+
+	dut_S2_mux_stage3 :Data_MUX 
+	generic map (control_bit_width => 1)
+	port map(Din(0) =>D2_output, Din(1) => constant_sig_1,
+		Dout => S2_mux_stage3_output,
+		control_bits => S2_mux_cntrl_stage3
+	);
+
+----###------------------ Data Hazard 2 MUX -----------------------
+
+	dut_DH_mux2 : Data_MUX 
+		generic map (control_bit_width => 2)
+		port map(Din(0) =>S2_mux_stage3_output, Din(1) =>##,Din(2) =>##,Din(3) =>## ,
+			Dout => DH2_mux_output,
+			control_bits => ##
+		);
+---------------------------------------------------------------------------
+-----------------------------Pipeline 3 ----------------------------------
+---------------------------------------------------------------------------
+
+	dut_pipe3: pipeline_reg3 
+
+	port map(
+		Rd_in => Rd_stage3,
+		Rs1_in => Rs1_stage3,
+		Rs2_in => Rs2_stage3,
+		S1_in => DH1_mux_output, S2_in=> DH2_mux_output,
+		Imm9_in => Pipe2_Imm9_out,
+		RF_enable_in => RF_enable_stage3,
+		Mem_write_in => mem_write_stage3,
+		Mem_read_in => mem_read_stage3,
+		Dout_mux_cntrl_in => Dout_mux_cntrl_stage3,
+		carry_enable_in =>  C_en_stage3,
+		zero_enable_in =>  Z_en_stage3,
+		carry_dep_in =>  C_dep_stage3,
+		zero_dep_in =>  Z_dep_stage3,
+		alu_output_mux_cntrl_in =>  ALU_output_mux_cntrl_stage3,
+		alu_cntrl_in => ALU_cntrl_stage3,
+		alu_a_input_mux_cntrl_in=> ALU_a_input_mux_cntrl_stage3,
+		Load_0_in => Load_0_stage3,
+		Rs1_dep_in => Rs1_dep_stage3,
+		Rs2_dep_in => Rs2_dep_stage3,
 
 
+		Rd_out => Rd_stage4,
+		Rs1_out => Rs1_stage4,
+		Rs2_out => Rs2_stage4,
+		Imm9_out => Pipe3_Imm9_out,
+		S1_out => S1_stage4, S2_out=> S2_stage4,
+		RF_enable_out => RF_enable_stage4,
+		Mem_write_out=>mem_write_stage4,
+		Mem_read_out=>mem_read_stage4,
+		Dout_mux_cntrl_out=>Dout_mux_cntrl_stage4,
+		carry_enable_out=>C_en_stage4,
+		zero_enable_out=>Z_en_stage4,
+		carry_dep_out=>C_dep_stage4,
+		zero_dep_out=>Z_dep_stage4,
+		alu_output_mux_cntrl_out=> ALU_output_mux_cntrl_stage4,
+		alu_cntrl_out=> ALU_cntrl_stage4,
+	
+		alu_a_input_mux_cntrl_out=>ALU_a_input_mux_cntrl_stage4,
+		Load_0_out=>Load_0_stage4,
+		Rs1_dep_out=>Rs1_dep_stage4,
+		Rs2_dep_out=>Rs2_dep_stage4,
+
+		clk=>clk,
+		enable=>pipe3_enable,
+		reset=>pipe3_reset
+	);
+-----------------------------------------------SE6-----------------------
+	dut_SE6: sign_extender_6to16
+		port map(
+		x=>Pipe3_Imm9_out(5 downto 0),
+		y=>SE6_output
+	);
+--------------------------------------------DE--------------------------
+	dut_DE: data_extender_9to16
+		port map(
+		x=>Pipe3_Imm9_out,
+		y=>DE_output 
+	);
+-----------------------------------------------Alu_a_input_mux---------------
+	dut_alu_a_input_mux_stage4 :Data_MUX 
+	generic map (control_bit_width => 1)
+	port map(Din(0)=>S1_stage4, Din(1)=>SE6_output,
+		Dout =>alu_a_input_mux_stage4_output,
+		control_bits=>ALU_a_input_mux_cntrl_stage4
+	);
+----------------------------------------------ALU--------------------------
+	dut_ALU: ALU
+	port map(X=>alu_a_input_mux_stage4_output,Y=>S2_stage4,
+	      Z=>ALU_output,
+	      carry_flag => alu_carry_flag_output_stage4,zero_flag=>alu_zero_flag_output_stage4,
+	      Control_bits=>ALU_cntrl_stage4
+	      
+	 );
 end Formula_Data_Path;
 
 

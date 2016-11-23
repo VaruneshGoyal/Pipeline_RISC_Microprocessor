@@ -124,7 +124,25 @@ signal alu_a_input_mux_stage4_output: std_logic_vector(15 downto 0);
 ----------------------------alu signals-----------------------
 signal ALU_output: std_logic_vector(15 downto 0);
 signal alu_carry_flag_output_stage4,alu_zero_flag_output_stage4: std_logic;
-
+---------------------------alu_output_mux---------------------
+signal alu_output_mux_stage4_output :std_logic_vector(15 downto 0);
+------------------------carry register signals---------------
+signal carry_reg_output: std_logic;
+----------------------------zero_input_mux signals
+signal zero_reg_input_mux_output: std_logic;
+-----------------------------zero register signals-------
+signal zero_reg_output: std_logic;
+-----------------------------Data Hazard 3 Mux signals
+signal DH3_mux_output: std_logic_vector(15 downto 0); 
+------------------------------------------------------------
+------------------------------pipeline 4 signals----------
+-------------------------------------------------------------
+signal pipe4_enable,pipe4_reset :std_logic;
+signal Rd_stage5,Rs1_stage5,Rs2_stage5 :std_logic_vector(2 downto 0);
+signal S1_stage5 : std_logic_vector( 15 downto 0);
+signal RF_enable_stage5, mem_write_stage5, mem_read_stage5, Dout_mux_cntrl_stage5 :std_logic;
+signal Load_0_stage5, alu_z_output_stage5: std_logic;
+signal alu_result_out_stage5: std_logic_vector(15 downto 0);
 
 
 
@@ -148,7 +166,7 @@ begin
 
 	dut_pc_mux: Data_MUX 
 		generic map (control_bit_width =>2);
-		port(Din(0) =>pc_adder_out ,Din(1)=> ,Din(2)=>, Din(3) => ## D1 from reg_file,
+		port(Din(0) =>pc_adder_out ,Din(1)=>ALU_output ,Din(2)=>##, Din(3) => ## D1 from reg_file,
 			Dout =>pc_reg_in,
 			control_bits => pc_mux_cntrl
 		);
@@ -166,7 +184,7 @@ begin
 
 	dut_pc_adder_mux: Data_MUX 
 			generic map (control_bit_width =>2);
-			port map(Din(0) =>constant_sig_1 ,Din(1)=> SE9_output,Din(2)=> ##, Din(3) => ## alu output from pipeline4,
+			port map(Din(0) =>constant_sig_1 ,Din(1)=> SE9_output, Din(2)=>SE6_output, Din(3) => ## alu output from pipeline4,
 				Dout =>pc_adder_mux_out,
 				control_bits => pc_adder_mux_cntrl
 			);
@@ -336,7 +354,7 @@ port map(	Rd_in => Rd_mux_out,
 
 	dut_DH_mux1 : Data_MUX 
 	generic map (control_bit_width => 2)
-	port map(Din(0) =>D1_output, Din(1) =>##,Din(2) =>##,Din(3) =>## ,
+	port map(Din(0) =>D1_output, Din(1) =>##,Din(2) =>##,Din(3) =>alu_output_mux_stage4_output ,
 		Dout => DH1_mux_output,
 		control_bits => ##
 	);
@@ -354,7 +372,7 @@ port map(	Rd_in => Rd_mux_out,
 
 	dut_DH_mux2 : Data_MUX 
 		generic map (control_bit_width => 2)
-		port map(Din(0) =>S2_mux_stage3_output, Din(1) =>##,Din(2) =>##,Din(3) =>## ,
+		port map(Din(0) =>S2_mux_stage3_output, Din(1) =>##,Din(2) =>##,Din(3) =>alu_output_mux_stage4_output ,
 			Dout => DH2_mux_output,
 			control_bits => ##
 		);
@@ -438,6 +456,81 @@ port map(	Rd_in => Rd_mux_out,
 	      Control_bits=>ALU_cntrl_stage4
 	      
 	 );
+----------------------------------------------alu_output_mux_stage4---------------
+	dut_alu_output_mux: Data_MUX 
+		generic map (control_bit_width => 2)
+		port map(Din(0)=>ALU_output, Din(1)=>SE6_output, Din(2)=>DE_output,Din(3)=>constant_sig_1,
+			Dout =>alu_output_mux_stage4_output,
+			control_bits => ALU_output_mux_cntrl_stage4
+		);
+----------------------------------------------carrry register---------------------
+	dut_carry_reg: DataRegister 
+	generic map(data_width:1)
+	port map (Din(0)=>alu_carry_flag_output_stage4,
+	      Dout(0)=>carry_reg_output,
+	      clk=>clk,
+		enable=>##,
+		reset=>reset
+		);
+-------------------------------------------------zero_reg_input_mux---------------
+	dut_zero_reg_input_mux: Data_MUX 
+	generic map (control_bit_width => 1)
+	port map(Din(0)=>alu_zero_flag_output_stage4, Din(1) =>##,
+		Dout => zero_reg_input_mux_output,
+		control_bits => ##
+	);
+-------------------------------------------------zero register---------------------
+	dut_zero_reg: DataRegister 
+	generic map(data_width:1)
+	port map (Din(0)=>zero_reg_input_mux_output,
+	      Dout(0)=>zero_reg_output,
+	      clk=>clk,
+		enable=>##,
+		reset=>reset
+		);
+----------------------------------------------------data hazard 3 mux--------------
+	dut_DH3_mux: Data_MUX 
+	generic map (control_bit_width => 1)
+	port map(Din(0)=>S1_stage4, Din(1) =>##,
+		Dout => DH3_mux_output,
+		control_bits => ##
+	);
+---------------------------------------------------------------------------
+-----------------------------Pipeline 4 ----------------------------------
+---------------------------------------------------------------------------
+
+	dut_pipe4: pipeline_reg4
+		port map(
+			alu_cntrl_1_in => ##, --useless; delete it
+			Rd_in=> Rd_stage4,
+			Rs1_in=> Rs1_stage4,
+			Rs2_in=> Rs2_stage4,
+			S1_in=>DH3_mux_output,
+			RF_enable_in=>RF_enable_stage4,
+			Mem_write_in=>mem_write_stage4,
+			Mem_read_in=>mem_read_stage4,
+			Dout_mux_cntrl_in=>Dout_mux_cntrl_stage4,
+			Load_0_in=>Load_0_stage4,
+			alu_result_in=>alu_output_mux_stage4_output,
+			alu_z_output_in=>(alu_zero_flag_output_stage4 and ALU_cntrl_stage4(1)), --for beq
+
+			alu_cntrl_1_out=>## useless,
+			Rd_out=> Rd_stage5,
+			Rs1_out=>Rs1_stage5,
+			Rs2_out=>Rs2_stage5,
+			S1_out=>S1_stage5,
+			RF_enable_out=>RF_enable_stage5,
+			Mem_write_out=>mem_write_stage5,
+			Mem_read_out=>mem_read_stage5,
+			Dout_mux_cntrl_out=>Dout_mux_cntrl_stage5,
+			Load_0_out=>Load_0_stage5,
+			alu_result_out=>alu_result_out_stage5,
+			alu_z_output_out=>alu_z_output_stage5,
+
+			clk=>clk,
+			enable=>pipe4_enable,
+			reset=>pipe4_reset
+	);
 end Formula_Data_Path;
 
 

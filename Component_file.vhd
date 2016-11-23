@@ -288,7 +288,7 @@ port(
 	Rd_in : in std_logic_vector(2 downto 0);
 	Rs1_in : in std_logic_vector(2 downto 0);
 	Rs2_in : in std_logic_vector(2 downto 0);
-	S1_in, S2_in: in std_logic_vector( 15 downto 0);
+	S1_in: in std_logic_vector( 15 downto 0);
 	RF_enable_in,Mem_write_in,Mem_read_in,Dout_mux_cntrl_in:in std_logic;
 	Load_0_in:in std_logic;
 	alu_result_in:in std_logic_vector(15 downto 0);
@@ -298,7 +298,7 @@ port(
 	Rd_out: out std_logic_vector(2 downto 0);
 	Rs1_out:out std_logic_vector(2 downto 0);
 	Rs2_out:out std_logic_vector(2 downto 0);
-	S1_out, S2_out:out std_logic_vector( 15 downto 0);
+	S1_out:out std_logic_vector( 15 downto 0);
 	RF_enable_out,Mem_write_out,Mem_read_out,Dout_mux_cntrl_out: out std_logic;
 	Load_0_out:out std_logic;
 	alu_result_out:out std_logic_vector(15 downto 0);

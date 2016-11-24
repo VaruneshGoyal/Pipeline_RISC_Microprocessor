@@ -19,7 +19,7 @@ port(
 	carry_enable_in,zero_enable_in,carry_dep_in,zero_dep_in: in std_logic;
 	alu_output_mux_cntrl_in : in std_logic_vector(1 downto 0);
 	alu_cntrl_in: in std_logic_vector(1 downto 0);
-	alu_a_input_mux_cntrl_in,Load_0_in:in std_logic;
+	alu_a_input_mux_cntrl_in, alu_b_input_mux_cntrl_in, Load_0_in:in std_logic;
 	Rs1_dep_in,Rs2_dep_in:in std_logic;
 
 
@@ -34,8 +34,12 @@ port(
 	alu_output_mux_cntrl_out : out std_logic_vector(1 downto 0);
 	alu_cntrl_out: out std_logic_vector(1 downto 0);
 	
+	alu_b_input_mux_cntrl_out : out std_logic;
 	alu_a_input_mux_cntrl_out,Load_0_out:out std_logic;
 	Rs1_dep_out,Rs2_dep_out:out std_logic;
+
+	LM_SM_bit_in:in std_logic;
+	LM_SM_bit_out:out std_logic;
 
 	clk,enable,reset :in std_logic
 );
@@ -119,6 +123,8 @@ begin
 
 	dut_alu_a_input_mux_cntrl_reg: DataRegister generic map(data_width=>1)port map (Din(0)=> alu_a_input_mux_cntrl_in,Dout(0) =>alu_a_input_mux_cntrl_out,clk=>clk, enable=>enable,reset=>reset);
 
+	dut_alu_b_input_mux_cntrl_reg: DataRegister generic map(data_width=>1)port map (Din(0)=> alu_b_input_mux_cntrl_in,Dout(0) =>alu_b_input_mux_cntrl_out,clk=>clk, enable=>enable,reset=>reset);
+
 	dut_Load_0_out_reg: DataRegister generic map(data_width=>1)port map (Din(0)=> Load_0_in,Dout(0) =>Load_0_out,clk=>clk, enable=>enable,reset=>reset);
 
 	
@@ -128,6 +134,8 @@ begin
 
 	dut_Rs2_dep_bit_reg: DataRegister generic map(data_width=>1)port map (Din(0)=>Rs2_dep_in,Dout(0) =>Rs2_dep_out,clk=>clk, enable=>enable,reset=>reset);
 
+	dut_LM_SM_bit_reg: DataRegister generic map(data_width=>1)port map (Din(0)=>LM_SM_bit_in,Dout(0) =>LM_SM_bit_out,clk=>clk, 	
+															enable=>enable,reset=>reset);
 
 
 -------------------------------------------------------------------------------------

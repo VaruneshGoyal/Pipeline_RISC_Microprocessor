@@ -6,7 +6,7 @@ use work.Microprocessor_project.all;
 entity InstructionDecode is
 port(   IR: in std_logic_vector(15 downto 0);		--IR = InstructionRegister
 		Rpe_zero_checker : in std_logic;
-     	RdMuxCtrl : out std_logic;
+     		RdMuxCtrl : out std_logic;
 		Rpe_mux_ctrl : out std_logic;
 
 		Rs1, Rs2, Rd : out std_logic_vector(2 downto 0);
@@ -36,7 +36,7 @@ architecture Behave of InstructionDecode is
 
 begin
 
-	process(IR)
+	process(IR, Rpe_zero_checker)
 		variable vRdMuxCtrl : std_logic;
 		variable vRpe_mux_ctrl : std_logic;
 
@@ -253,7 +253,7 @@ begin
 			vALU_output_mux_ctrl:= "00"; --00 for Alu output, 01 for SE6, 10 for DE
 			vC_en:= '0'; 
 			vC_dep:= '0'; 
-			vZ_en:= '1'; --!!!!!!!Actually dont care case here
+			vZ_en:= '0'; --!!!!!!!Actually dont care case here...nahi beta bahut important hai
 			vZ_dep:= '0'; 
 			vALU_a_input_mux_ctrl:= '1'; --1 for SE6
 	
@@ -302,7 +302,7 @@ begin
 --use hazard detection to take input in S1 from ALU_output (incremented value)
 		when "0110" =>	 				--LM	
 			vRdMuxCtrl := '1';		--1 if from PE
-			vRpe_mux_ctrl := '1';	--1 if LM/SM instruction
+			vRpe_mux_ctrl := '1' and (not Rpe_zero_checker);	--1 if LM/SM instruction
 	
 			vRs1 := IR(11 downto 9); 
 			vRs2 :="000"; 
@@ -336,7 +336,7 @@ begin
 --use hazard detection to take input in S1 from ALU_output (incremented value)
 		when "0111" =>					 --SM		
 			vRdMuxCtrl := '1';		--1 if from PE
-			vRpe_mux_ctrl := '1';	--1 if LM/SM instruction
+			vRpe_mux_ctrl := '1' and (not Rpe_zero_checker);	--1 if LM/SM instruction
 	
 			vRs1 := IR(11 downto 9);
 			vRs2 :="000"; 

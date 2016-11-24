@@ -238,7 +238,7 @@ port(	Rd_in : in std_logic_vector(2 downto 0);
 	S2_mux_cntrl_in :in std_logic;
 	alu_a_input_mux_cntrl_in,Load_0_in:in std_logic;
 	Rs1_dep_in,Rs2_dep_in:in std_logic;
-	JAL_bit_in,JLR_bit_in:in std_logic;
+	JAL_bit_in,JLR_bit_in, LM_SM_bit_in:in std_logic;
 
 	Rd_out : out std_logic_vector(2 downto 0);
 	Rs1_out : out std_logic_vector(2 downto 0);
@@ -253,7 +253,7 @@ port(	Rd_in : in std_logic_vector(2 downto 0);
 	S2_mux_cntrl_out :out std_logic;
 	alu_a_input_mux_cntrl_out,Load_0_out:out std_logic;
 	Rs1_dep_out,Rs2_dep_out:out std_logic;
-	JAL_bit_out,JLR_bit_out:out std_logic;
+	JAL_bit_out,JLR_bit_out, LM_SM_bit_out:out std_logic;
 
 	clk,enable,reset :in std_logic
 );
@@ -274,7 +274,7 @@ port(
 	carry_enable_in,zero_enable_in,carry_dep_in,zero_dep_in: in std_logic;
 	alu_output_mux_cntrl_in : in std_logic_vector(1 downto 0);
 	alu_cntrl_in: in std_logic_vector(1 downto 0);
-	alu_a_input_mux_cntrl_in,Load_0_in:in std_logic;
+	alu_a_input_mux_cntrl_in,alu_b_input_mux_cntrl_in,Load_0_in:in std_logic;
 	Rs1_dep_in,Rs2_dep_in:in std_logic;
 
 
@@ -290,8 +290,11 @@ port(
 	alu_output_mux_cntrl_out : out std_logic_vector(1 downto 0);
 	alu_cntrl_out: out std_logic_vector(1 downto 0);
 	
-	alu_a_input_mux_cntrl_out,Load_0_out:out std_logic;
+	alu_a_input_mux_cntrl_out,alu_b_input_mux_cntrl_out,Load_0_out:out std_logic;
 	Rs1_dep_out,Rs2_dep_out:out std_logic;
+
+	LM_SM_bit_in:in std_logic;
+	LM_SM_bit_out:out std_logic;
 
 	clk,enable,reset :in std_logic
 );
@@ -323,6 +326,9 @@ port(
 	Load_0_out:out std_logic;
 	alu_result_out:out std_logic_vector(15 downto 0);
 	alu_z_output_out:out std_logic;
+
+	LM_SM_bit_in:in std_logic;
+	LM_SM_bit_out:out std_logic;
 
 	clk,enable,reset :in std_logic
 	);
@@ -390,6 +396,7 @@ component Data_Hazard is
 			Load_0_4 : in std_logic;
 			RF_en_3, RF_en_4, RF_en_5 : in std_logic;
 			mem_write_3: in std_logic;
+			LM_SM_bit_stage4, LM_SM_bit_stage5 : in std_logic;
 			DH1, DH2 : out std_logic_vector(1 downto 0);
 			DH3: out std_logic
 			);

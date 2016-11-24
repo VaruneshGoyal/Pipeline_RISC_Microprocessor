@@ -31,6 +31,9 @@ port(
 	alu_result_out:out std_logic_vector(15 downto 0);
 	alu_z_output_out:out std_logic;
 
+	LM_SM_bit_in:in std_logic;
+	LM_SM_bit_out:out std_logic;
+
 	clk,enable,reset :in std_logic
 	);
 
@@ -104,6 +107,8 @@ dut_RF_enable_reg: DataRegister	generic map(data_width=>1)port map (Din(0)=> RF_
 
 dut_Load_0_out_reg: DataRegister generic map(data_width=>1)port map (Din(0)=> Load_0_in,Dout(0) =>Load_0_out,clk=>clk, enable=>enable,reset=>reset);
 
+dut_LM_SM_bit_reg: DataRegister generic map(data_width=>1)port map (Din(0)=>LM_SM_bit_in,Dout(0) =>LM_SM_bit_out,clk=>clk, 	
+															enable=>enable,reset=>reset);
 
 
 end Formula_Pipeline_reg4;

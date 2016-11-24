@@ -10,6 +10,7 @@ entity Data_Hazard is
 			Rd_3, Rd_4, Rd_5 : in std_logic_vector(2 downto 0); 
 			Load_0_4 : in std_logic;
 			RF_en_3, RF_en_4, RF_en_5 : in std_logic;
+			LM_SM_bit_stage4, LM_SM_bit_stage5 : in std_logic;
 			mem_write_3: in std_logic;
 			DH1, DH2 : out std_logic_vector(1 downto 0);
 			DH3: out std_logic
@@ -19,7 +20,7 @@ end entity;
 architecture Behave of Data_Hazard is
 
 begin
-	process(Rs1_2, Rs2_2, Rs1_3, Rd_3, Rd_4, Rd_5, Load_0_4, RF_en_3, RF_en_4, RF_en_5, mem_write_3)
+	process(Rs1_2, Rs2_2, Rs1_3, Rd_3, Rd_4, Rd_5, Load_0_4, RF_en_3, RF_en_4, RF_en_5, mem_write_3, LM_SM_bit_stage4, LM_SM_bit_stage5)
 		variable vDH1, vDH2 : std_logic_vector(1 downto 0);
 		variable vDH3: std_logic;
 	begin
@@ -30,7 +31,7 @@ begin
 			vDH3 := '1';			--addressing lw followed by sw with dependency
 		end if;
 			--for s1 input
-		if(Rd_3 = Rs1_2 and RF_en_3 = '1') then
+		if((Rd_3 = Rs1_2 and RF_en_3 = '1') or (LM_SM_bit_stage4 = '1')) then
 			vDH1 := "11";
 		elsif(Rd_4 = Rs1_2 and RF_en_4 = '1') then
 			vDH1 := "10";

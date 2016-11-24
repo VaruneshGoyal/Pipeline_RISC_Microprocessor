@@ -46,7 +46,7 @@ begin
 	   if( reset ='1') then
 		Dout <= const0;
 	   else
-		   if(enable = '1' ) then
+		   if(enable = '1') then
 		       Dout <= Din;
 		   elsif(imm_data_enable ='1') then
 		       Dout(8 downto 0) <= Din(8 downto 0);

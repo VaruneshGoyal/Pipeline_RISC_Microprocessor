@@ -7,20 +7,24 @@ use work.Microprocessor_project.all;
 
 entity pipeline_reg4 is
 port(
-	alu_cntrl_1_in :in std_logic;
+	--alu_cntrl_1_in :in std_logic;
 	Rd_in : in std_logic_vector(2 downto 0);
 	Rs1_in : in std_logic_vector(2 downto 0);
 	Rs2_in : in std_logic_vector(2 downto 0);
+	Pc_in : in std_logic_vector( 15 downto 0);
+
 	S1_in: in std_logic_vector( 15 downto 0);
 	RF_enable_in,Mem_write_in,Mem_read_in,Dout_mux_cntrl_in:in std_logic;
 	Load_0_in:in std_logic;
 	alu_result_in:in std_logic_vector(15 downto 0);
 	alu_z_output_in :in std_logic;
 
-	alu_cntrl_1_out:out std_logic;
+	--alu_cntrl_1_out:out std_logic;
 	Rd_out: out std_logic_vector(2 downto 0);
 	Rs1_out:out std_logic_vector(2 downto 0);
 	Rs2_out:out std_logic_vector(2 downto 0);
+	Pc_out : out std_logic_vector( 15 downto 0);
+
 	S1_out:out std_logic_vector( 15 downto 0);
 	RF_enable_out,Mem_write_out,Mem_read_out,Dout_mux_cntrl_out: out std_logic;
 	Load_0_out:out std_logic;
@@ -37,11 +41,11 @@ architecture Formula_Pipeline_reg4 of pipeline_reg4 is
 
 begin
 
-	dut_alu_cntrl_1_reg: DataRegister
-				generic map(data_width=>1)
-				port map (Din(0)=> alu_cntrl_1_in,
-				      Dout(0) => alu_cntrl_1_out,
-				      clk=>clk, enable=>enable,reset=>reset);
+--	dut_alu_cntrl_1_reg: DataRegister
+--				generic map(data_width=>1)
+--				port map (Din(0)=> alu_cntrl_1_in,
+--				      Dout(0) => alu_cntrl_1_out,
+--				      clk=>clk, enable=>enable,reset=>reset);
 
 	dut_rd_reg: DataRegister
 				generic map(data_width=>3)
@@ -60,6 +64,12 @@ begin
 		      Dout => Rs2_out,
 		      clk=>clk, enable=>enable,reset=>reset);
 
+	dut_pc_reg: DataRegister
+		generic map(data_width=>16)
+		port map (Din=> Pc_in,
+		      Dout => Pc_out,
+		      clk=>clk, enable=>enable,reset=>reset);
+
 
 	dut_S1_reg: DataRegister
 				generic map(data_width=>16)
@@ -76,7 +86,7 @@ begin
 			      clk=>clk, enable=>enable,reset=>reset);
 
 	dut_alu_z_output_reg: DataRegister
-			generic map(data_width=>16)
+			generic map(data_width=>1)
 			port map (Din(0)=> alu_z_output_in,
 			      Dout(0) => alu_z_output_out,
 			      clk=>clk, enable=>enable,reset=>reset);

@@ -22,7 +22,7 @@ end entity;
 Architecture Behave of Load_hazard is
 begin 
 
-	process
+	process(Rd_4, Rs1_3, Rs2_3, Rs1_dep_3, Rs2_dep_3, Z_Dep_3, Z_en_3, Load_0_4, mem_write_3)
 		variable vZ_mux_ctrl : std_logic;
 		variable vC_en, vpipereg_1_en, vpipereg_2_en, vpipereg_3_en, vpc_en : std_logic;
 		variable vreset_4: std_logic;
@@ -30,6 +30,7 @@ begin
 		vZ_mux_ctrl := '0';
 		--vZ_en := '1';
 		vC_en := '1';
+		vpc_en := '1';
 		vpipereg_1_en := '1';
 		vpipereg_2_en := '1';
 		vpipereg_3_en := '1';

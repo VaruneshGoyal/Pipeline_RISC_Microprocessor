@@ -12,6 +12,7 @@ entity Control_Hazard is
 			mem_read_4 : in std_logic;
 			reset_1, reset_2, reset_3, reset_4 : out std_logic;
 			incrementor_mux_ctrl : out std_logic_vector(1 downto 0);
+			incrementor_mux_2_ctrl: out std_logic_vector(1 downto 0);
 			PC_mux_ctrl : out std_logic_vector(1 downto 0);
 			C_en, Z_en : out std_logic );
 end entity;
@@ -19,7 +20,7 @@ end entity;
 architecture Behave of Control_Hazard is
 
 begin
-	process(BEQ_bit_4, JAL_bit_2, JLR_bit_2, Rd_3, Rd_4)
+	process(BEQ_bit_4, JAL_bit_2, JLR_bit_2, Rd_3, Rd_4, mem_read_4)
 		variable vPC_mux_ctrl : std_logic_vector (1 downto 0);
 		variable vincrementor_mux_ctrl : std_logic_vector (1 downto 0);
 		variable vreset_1 : std_logic;
@@ -60,6 +61,7 @@ begin
 		
 		PC_mux_ctrl <= vPC_mux_ctrl;
 		incrementor_mux_ctrl <= vincrementor_mux_ctrl;
+		incrementor_mux_2_ctrl <= vincrementor_mux_ctrl;
 		reset_1 <= vreset_1; reset_1 <= vreset_2; reset_1 <= vreset_3; reset_1 <= vreset_4;
 		C_en <= vC_en;
 		Z_en <= vZ_en;

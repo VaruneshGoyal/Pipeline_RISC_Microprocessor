@@ -62,7 +62,15 @@ port(Din:in Data_in( (2**control_bit_width)-1 downto 0);
 );
 end component;
 
-component Memory is
+component Instruction_Memory is
+port ( Din: in std_logic_vector(15 downto 0);
+	Dout: out std_logic_vector(15 downto 0);
+	write_enable,read_enable,clk: in std_logic;
+	Addr: in std_logic_vector(15 downto 0)
+);
+end component;
+
+component Data_Memory is
 port ( Din: in std_logic_vector(15 downto 0);
 	Dout: out std_logic_vector(15 downto 0);
 	write_enable,read_enable,clk: in std_logic;
@@ -240,7 +248,7 @@ port(	Rd_in : in std_logic_vector(2 downto 0);
 
 	RF_enable_out,Mem_write_out,Mem_read_out,Dout_mux_cntrl_out: out std_logic;
 	carry_enable_out,zero_enable_out,carry_dep_out,zero_dep_out: out std_logic;
-	alu_output_mux_cntrl_out : in std_logic_vector(1 downto 0);
+	alu_output_mux_cntrl_out : out std_logic_vector(1 downto 0);
 	alu_cntrl_out : out std_logic_vector(1 downto 0);
 	S2_mux_cntrl_out :out std_logic;
 	alu_a_input_mux_cntrl_out,Load_0_out:out std_logic;
@@ -260,6 +268,8 @@ port(
 	Rs2_in : in std_logic_vector(2 downto 0);
 	S1_in, S2_in: in std_logic_vector( 15 downto 0);
 	Imm9_in :in std_logic_vector( 8 downto 0);
+	Pc_in : in std_logic_vector( 15 downto 0);
+
 	RF_enable_in,Mem_write_in,Mem_read_in,Dout_mux_cntrl_in:in std_logic;
 	carry_enable_in,zero_enable_in,carry_dep_in,zero_dep_in: in std_logic;
 	alu_output_mux_cntrl_in : in std_logic_vector(1 downto 0);
@@ -272,10 +282,12 @@ port(
 	Rs1_out:out std_logic_vector(2 downto 0);
 	Rs2_out:out std_logic_vector(2 downto 0);
 	Imm9_out:out std_logic_vector( 8 downto 0);
+	Pc_out : out std_logic_vector( 15 downto 0);
+
 	S1_out, S2_out: out std_logic_vector( 15 downto 0);
 	RF_enable_out,Mem_write_out,Mem_read_out,Dout_mux_cntrl_out: out std_logic;
 	carry_enable_out,zero_enable_out,carry_dep_out,zero_dep_out: out std_logic;
-	alu_output_mux_cntrl_out : in std_logic_vector(1 downto 0);
+	alu_output_mux_cntrl_out : out std_logic_vector(1 downto 0);
 	alu_cntrl_out: out std_logic_vector(1 downto 0);
 	
 	alu_a_input_mux_cntrl_out,Load_0_out:out std_logic;
@@ -288,20 +300,24 @@ end component;
 
 component pipeline_reg4 is
 port(
-	alu_cntrl_1_in :in std_logic;
+	--alu_cntrl_1_in :in std_logic;
 	Rd_in : in std_logic_vector(2 downto 0);
 	Rs1_in : in std_logic_vector(2 downto 0);
 	Rs2_in : in std_logic_vector(2 downto 0);
+	Pc_in : in std_logic_vector( 15 downto 0);
+
 	S1_in: in std_logic_vector( 15 downto 0);
 	RF_enable_in,Mem_write_in,Mem_read_in,Dout_mux_cntrl_in:in std_logic;
 	Load_0_in:in std_logic;
 	alu_result_in:in std_logic_vector(15 downto 0);
 	alu_z_output_in :in std_logic;
 
-	alu_cntrl_1_out:out std_logic;
+	--alu_cntrl_1_out:out std_logic;
 	Rd_out: out std_logic_vector(2 downto 0);
 	Rs1_out:out std_logic_vector(2 downto 0);
 	Rs2_out:out std_logic_vector(2 downto 0);
+	Pc_out : out std_logic_vector( 15 downto 0);
+	
 	S1_out:out std_logic_vector( 15 downto 0);
 	RF_enable_out,Mem_write_out,Mem_read_out,Dout_mux_cntrl_out: out std_logic;
 	Load_0_out:out std_logic;
@@ -363,6 +379,7 @@ component Control_Hazard is
 			mem_read_4 : in std_logic;
 			reset_1, reset_2, reset_3, reset_4 : out std_logic;
 			incrementor_mux_ctrl : out std_logic_vector(1 downto 0);
+			incrementor_mux_2_ctrl: out std_logic_vector(1 downto 0);
 			PC_mux_ctrl : out std_logic_vector(1 downto 0);
 			C_en, Z_en : out std_logic );
 end component;
@@ -395,12 +412,10 @@ component Load_hazard is
 end component;
 
 
-component IITB_RISC_Microprocessor is
-port(
-clk,reset:in std_logic
---from_memory_data: in std_logic_vector(15 downto 0);
---to_memory_address: out std_logic_vector(15 downto 0);
---mem_read_en_sig, mem_write_en_sig : out std_logic 
+component Data_path is 
+
+port (clk:in std_logic;
+	reset:in std_logic
 );
 end component;
 

@@ -184,7 +184,7 @@ begin
 		
 			vALU_ctrl := "01";			--00 for add, 01 for NAND, 10 for XOR
 			vALU_output_mux_ctrl:= "00"; --00 for Alu output, 01 for SE6, 10 for DE
-			vC_en:= '1'; 
+			vC_en:= '0'; 
 			if(IR(0) = '1') then
 				vZ_dep := '1';
 			elsif (IR(1) = '1') then

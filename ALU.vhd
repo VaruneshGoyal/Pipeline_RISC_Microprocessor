@@ -33,7 +33,7 @@ dut_nand : ALU_NAND port map( X=> X ,Y => Y, Z=>Nand_out);
 dut_xor: ALU_XOR port map(X=> X ,Y => Y , Z=>Xor_out);
 
 dut_data_mux:  Data_MUX generic map(control_bit_width=>2 ) 
-						port map(Din(0)=>add_out,Din(1) => Xor_out, Din(2) => Nand_out ,Din(3)=>unused_port_sig,	Dout=>Mux_out,	control_bits => Control_bits);
+						port map(Din(0)=>add_out,Din(1) => Nand_out, Din(2) => Xor_out ,Din(3)=>unused_port_sig,	Dout=>Mux_out,	control_bits => Control_bits);
 Z<= Mux_out;
 
 dut_ZC :zero_checker port map(X=> Mux_out,Z=>zero_flag);

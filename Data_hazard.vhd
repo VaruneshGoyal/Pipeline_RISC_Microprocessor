@@ -19,7 +19,7 @@ end entity;
 architecture Behave of Data_Hazard is
 
 begin
-	process
+	process(Rs1_2, Rs2_2, Rs1_3, Rd_3, Rd_4, Rd_5, Load_0_4, RF_en_3, RF_en_4, RF_en_5, mem_write_3)
 		variable vDH1, vDH2 : std_logic_vector(1 downto 0);
 		variable vDH3: std_logic;
 	begin

@@ -9,25 +9,26 @@ entity Microproc_Testbench is
 end entity;
 architecture Behave of Microproc_Testbench is
 
-component IITB_RISC_Microprocessor is
-   port(clk,reset: in std_logic);
+component Data_path is
+   port(clk :in std_logic; reset: in std_logic);
 end component;
 
   signal clk: std_logic := '0';
   signal reset: std_logic := '1';
 
  begin
+
   clk <= not clk after 5 ns; -- assume 10ns clock.
 
   -- reset process
   process
   begin
-
+	report "line1";
      reset <= '0' after 17 ns;
      wait;
   end process;
 
-  dut: IITB_RISC_Microprocessor  
+  dut: Data_path  
      port map(clk => clk,reset => reset);
 end Behave;
 

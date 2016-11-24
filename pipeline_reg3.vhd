@@ -13,6 +13,8 @@ port(
 	Rs2_in : in std_logic_vector(2 downto 0);
 	S1_in, S2_in: in std_logic_vector( 15 downto 0);
 	Imm9_in :in std_logic_vector( 8 downto 0);
+	Pc_in : in std_logic_vector( 15 downto 0);
+
 	RF_enable_in,Mem_write_in,Mem_read_in,Dout_mux_cntrl_in:in std_logic;
 	carry_enable_in,zero_enable_in,carry_dep_in,zero_dep_in: in std_logic;
 	alu_output_mux_cntrl_in : in std_logic_vector(1 downto 0);
@@ -25,10 +27,11 @@ port(
 	Rs1_out:out std_logic_vector(2 downto 0);
 	Rs2_out:out std_logic_vector(2 downto 0);
 	Imm9_out:out std_logic_vector( 8 downto 0);
+	Pc_out : out std_logic_vector( 15 downto 0);
 	S1_out, S2_out: out std_logic_vector( 15 downto 0);
 	RF_enable_out,Mem_write_out,Mem_read_out,Dout_mux_cntrl_out: out std_logic;
 	carry_enable_out,zero_enable_out,carry_dep_out,zero_dep_out: out std_logic;
-	alu_output_mux_cntrl_out : in std_logic_vector(1 downto 0);
+	alu_output_mux_cntrl_out : out std_logic_vector(1 downto 0);
 	alu_cntrl_out: out std_logic_vector(1 downto 0);
 	
 	alu_a_input_mux_cntrl_out,Load_0_out:out std_logic;
@@ -82,6 +85,12 @@ begin
 			      Dout => Imm9_out,
 			      clk=>clk, enable=>enable,reset=>reset);
 
+	dut_pc_reg: DataRegister
+			generic map(data_width=>16)
+			port map (Din=> Pc_in,
+			      Dout => Pc_out,
+			      clk=>clk, enable=>enable,reset=>reset);
+
 -------------------------------------------------------------------------------
 
 	dut_RF_enable_reg: DataRegister	generic map(data_width=>1)port map (Din(0)=> RF_enable_in,Dout(0) =>RF_enable_out,clk=>clk, enable=>enable,reset=>reset);
@@ -101,7 +110,7 @@ begin
 
 	dut_zero_dep_reg: DataRegister generic map(data_width=>1)port map (Din(0)=> zero_dep_in,Dout(0) =>zero_dep_out,clk=>clk, enable=>enable,reset=>reset);
 
-	dut_alu_output_mux_cntrl_reg: DataRegister generic map(data_width=>1)port map (Din(0)=> alu_output_mux_cntrl_in,Dout(0) =>alu_output_mux_cntrl_out,clk=>clk, enable=>enable,reset=>reset);
+	dut_alu_output_mux_cntrl_reg: DataRegister generic map(data_width=>2)port map (Din=> alu_output_mux_cntrl_in,Dout =>alu_output_mux_cntrl_out,clk=>clk, enable=>enable,reset=>reset);
 ----------------------------------------------------------------------------------------
 	dut_alu_cntrl_reg: DataRegister generic map(data_width=>2)port map (Din=>alu_cntrl_in,Dout=> alu_cntrl_out ,clk=>clk, enable=>enable,reset=>reset);
 

@@ -403,8 +403,8 @@ begin
 			vRdMuxCtrl := '0';		--1 if from PE
 			vRpe_mux_ctrl := '0';	--1 if LM/SM instruction
 	
-			vRs1 := IR(8 downto 6);
-			vRs2 := "111"; 
+			vRs1 := "111";
+			vRs2 := IR(8 downto 6); 
 			vRd := IR(11 downto 9);
 			vRf_en := '1';
 			vRs1_dep := '1';

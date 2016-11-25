@@ -21,7 +21,7 @@ port(
 	alu_cntrl_in: in std_logic_vector(1 downto 0);
 	alu_a_input_mux_cntrl_in, alu_b_input_mux_cntrl_in, Load_0_in:in std_logic;
 	Rs1_dep_in,Rs2_dep_in:in std_logic;
-
+	--JLR_bit_in:in std_logic;
 
 	Rd_out : out std_logic_vector(2 downto 0);
 	Rs1_out:out std_logic_vector(2 downto 0);
@@ -37,7 +37,7 @@ port(
 	alu_b_input_mux_cntrl_out : out std_logic;
 	alu_a_input_mux_cntrl_out,Load_0_out:out std_logic;
 	Rs1_dep_out,Rs2_dep_out:out std_logic;
-
+	--JLR_bit_out:out std_logic;
 	LM_SM_bit_in:in std_logic;
 	LM_SM_bit_out:out std_logic;
 
@@ -137,6 +137,7 @@ begin
 	dut_LM_SM_bit_reg: DataRegister generic map(data_width=>1)port map (Din(0)=>LM_SM_bit_in,Dout(0) =>LM_SM_bit_out,clk=>clk, 	
 															enable=>enable,reset=>reset);
 
+	--dut_JLR_bit_reg: DataRegister generic map(data_width=>1)port map (Din(0)=>JLR_bit_in,Dout(0) =>JLR_bit_out,clk=>clk, enable=>enable,reset=>reset);
 
 -------------------------------------------------------------------------------------
 

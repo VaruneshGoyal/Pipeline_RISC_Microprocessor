@@ -9,6 +9,7 @@ entity Control_Hazard is
 	port ( BEQ_bit_4 : in std_logic; --the alu_signal(1) bit
 			JAL_bit_2, JLR_bit_2 : in std_logic;
 			Rd_3, Rd_4 : in std_logic_vector(2 downto 0);
+			RF_enable_stage3 : in std_logic;
 			mem_read_4 : in std_logic;
 			Z_flag, Z_dep_stage4, C_flag, C_dep_stage4 : in std_logic;
 			reset_1, reset_2, reset_3, reset_4 : out std_logic;
@@ -21,7 +22,7 @@ end entity;
 architecture Behave of Control_Hazard is
 
 begin
-	process(BEQ_bit_4, JAL_bit_2, JLR_bit_2, Rd_3, Rd_4, mem_read_4)
+	process(BEQ_bit_4, JAL_bit_2, JLR_bit_2, Rd_3, Rd_4, mem_read_4,RF_enable_stage3)
 		variable vPC_mux_ctrl : std_logic_vector (1 downto 0);
 		variable vincrementor_mux_ctrl : std_logic_vector (1 downto 0);
 		variable vreset_1 : std_logic;
@@ -49,7 +50,7 @@ begin
 			--control of Z flag from here or separate? decide later...build a LW detector unit.
 			--Z_en <= '1';
 			--Z_mux_ctrl <= '1';						--i.e. from memory
-		elsif(Rd_3 = "111") then
+		elsif(Rd_3 = "111" and RF_enable_stage3 = '1') then
 			if((Z_flag = '0' and z_dep_stage4 = '1') or (C_flag = '0' and C_dep_stage4 = '1')) then
 			vPC_mux_ctrl := "00";
 			else 

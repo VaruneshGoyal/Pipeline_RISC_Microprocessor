@@ -382,6 +382,7 @@ component Control_Hazard is
 	port ( BEQ_bit_4 : in std_logic; --the alu_signal(1) bit
 			JAL_bit_2, JLR_bit_2 : in std_logic;
 			Rd_3, Rd_4 : in std_logic_vector(2 downto 0);
+			RF_enable_stage3 : in std_logic;
 			mem_read_4 : in std_logic;
 			Z_flag, Z_dep_stage4, C_flag, C_dep_stage4 : in std_logic;
 			reset_1, reset_2, reset_3, reset_4 : out std_logic;

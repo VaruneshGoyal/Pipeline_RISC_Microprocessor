@@ -208,7 +208,7 @@ pc_enable <= '1' and pc_enable_lh and (not LM_SM_bit_stage2);
 ------------------------PC _MUX -------------------------------------
 	dut_pc_mux: Data_MUX 
 		generic map (control_bit_width =>2)
-		port map (Din(0) =>pc_adder_out ,Din(1)=>alu_output_mux_stage4_output_temp, Din(2)=>Data_mem_out, Din(3) => DH1_mux_output, --## D1 from reg_file,
+		port map (Din(0) =>pc_adder_out ,Din(1)=>alu_output_mux_stage4_output_temp, Din(2)=>Data_mem_out, Din(3) => DH2_mux_output, --## D2 from reg_file,
 			Dout =>pc_reg_in,
 			control_bits => pc_mux_cntrl
 		);
@@ -715,6 +715,7 @@ dut_control_hazard : Control_Hazard
 	port map ( 	BEQ_bit_4 => alu_z_output_stage5,
 			JAL_bit_2 => JAL_bit_stage3, JLR_bit_2 => JLR_bit_stage3,
 			Rd_3 => Rd_stage4, Rd_4 => Rd_stage5,
+			RF_enable_stage3 =>RF_enable_stage3,
 			mem_read_4 => mem_read_stage5,
 			Z_flag=>zero_reg_output, 
 			Z_dep_stage4=>Z_dep_stage4,

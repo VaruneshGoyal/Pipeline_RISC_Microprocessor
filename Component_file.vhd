@@ -296,7 +296,7 @@ port(
 	LM_SM_bit_in:in std_logic;
 	LM_SM_bit_out:out std_logic;
 
-	clk,enable,reset :in std_logic
+	clk,enable,S2_enable,reset :in std_logic
 );
 
 end component;
@@ -383,6 +383,7 @@ component Control_Hazard is
 			JAL_bit_2, JLR_bit_2 : in std_logic;
 			Rd_3, Rd_4 : in std_logic_vector(2 downto 0);
 			mem_read_4 : in std_logic;
+			Z_flag, Z_dep_stage4, C_flag, C_dep_stage4 : in std_logic;
 			reset_1, reset_2, reset_3, reset_4 : out std_logic;
 			incrementor_mux_ctrl : out std_logic_vector(1 downto 0);
 			incrementor_mux_2_ctrl: out std_logic_vector(1 downto 0);
@@ -391,14 +392,17 @@ component Control_Hazard is
 end component;
 
 component Data_Hazard is
-	port ( 	Rs1_2, Rs2_2, Rs1_3 : in std_logic_vector(2 downto 0);
+	port ( 	Rs1_2, Rs2_2, Rs1_3, Rs2_3: in std_logic_vector(2 downto 0);
 			Rd_3, Rd_4, Rd_5 : in std_logic_vector(2 downto 0); 
-			Load_0_4 : in std_logic;
+			Rs1_dep_3, Rs2_dep_3  : in std_logic;			
+			Load_0_4, Load_0_3 : in std_logic;
 			RF_en_3, RF_en_4, RF_en_5 : in std_logic;
 			mem_write_3: in std_logic;
+			Z_flag, Z_dep_stage4, C_flag, C_dep_stage4 : in std_logic;
 			LM_SM_bit_stage4, LM_SM_bit_stage5 : in std_logic;
 			DH1, DH2 : out std_logic_vector(1 downto 0);
-			DH3: out std_logic
+			DH3: out std_logic;
+			S2_enable : out std_logic
 			);
 end component;
 

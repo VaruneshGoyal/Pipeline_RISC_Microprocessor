@@ -66,6 +66,8 @@ signal Rs1_dep_stage2,Rs2_dep_stage2:std_logic;
 signal rpe_zero_checker_output :std_logic;
 ----------------------------RD Mux signals -------------------
 signal Rd_mux_out :std_logic_vector(2 downto 0);
+----------------------------Rs2 mux signals-------------------
+signal Rs2_mux_out:std_logic_vector(2 downto 0);
 -----------------------------------------------------------
 -------------------------Pipeline 2 signals ---------------
 ----------------------------------------------------------
@@ -96,10 +98,6 @@ signal SE9_output : std_logic_vector(15 downto 0);
 signal DH1_mux_output: std_logic_vector(15 downto 0);
 signal DH1_control_bits : std_logic_vector(1 downto 0);
 
----------------------------S2 mux stage 3
-
-signal S2_mux_stage3_output : std_logic_vector( 15 downto 0);	
-
 ------------------------- Data Hazard Mux 2 signals
 
 signal DH2_mux_output :std_logic_vector(15 downto 0);
@@ -120,7 +118,7 @@ signal ALU_b_input_mux_cntrl_stage4  : std_logic;
 signal ALU_cntrl_stage4,ALU_output_mux_cntrl_stage4:std_logic_vector(1 downto 0);
 signal Load_0_stage4:std_logic;
 signal LM_SM_bit_stage4 : std_logic;
-signal pipe3_enable,pipe3_reset :std_logic;
+signal pipe3_enable,pipe3_reset, S2_enable_pipe3 :std_logic;
 signal Rs1_dep_stage4, Rs2_dep_stage4:std_logic;
 ----------------------------SE6 signals
 signal SE6_output: std_logic_vector(15 downto 0);
@@ -149,6 +147,8 @@ signal Z_en_final : std_logic;
 -----------------------------Data Hazard 3 Mux signals
 signal DH3_mux_output: std_logic_vector(15 downto 0); 
 signal DH3_control_bit:std_logic_vector(0 downto 0);
+-----------------------------S1_S2_mux_stage4 signals
+signal S1_S2_mux_stage4_output:std_logic_vector(15 downto 0);
 ------------------------------------------------------------
 ------------------------------pipeline 4 signals----------
 -------------------------------------------------------------
@@ -208,7 +208,7 @@ pc_enable <= '1' and pc_enable_lh and (not LM_SM_bit_stage2);
 ------------------------PC _MUX -------------------------------------
 	dut_pc_mux: Data_MUX 
 		generic map (control_bit_width =>2)
-		port map (Din(0) =>pc_adder_out ,Din(1)=>ALU_output ,Din(2)=>Data_mem_out, Din(3) => D1_output, --## D1 from reg_file,
+		port map (Din(0) =>pc_adder_out ,Din(1)=>alu_output_mux_stage4_output_temp, Din(2)=>Data_mem_out, Din(3) => DH1_mux_output, --## D1 from reg_file,
 			Dout =>pc_reg_in,
 			control_bits => pc_mux_cntrl
 		);
@@ -331,6 +331,14 @@ port map(
 		control_bits=>Rd_mux_cntrl
 	); 
 
+--------------------------Rs2_mux------------------
+	dut_Rs2_mux: Data_MUX_3 
+	generic map(control_bit_width => 1)
+	port map(Din(0) => Rs2_stage2, Din(1) => pe_out, 
+		Dout=> Rs2_mux_out,
+		control_bits=>Rd_mux_cntrl
+	); 
+
 -------------------------------------------------------------
 -----------------------Pipe line 2---------------------------
 -------------------------------------------------------------
@@ -342,7 +350,7 @@ dut_pipe2: pipeline_reg2
 
 port map(	Rd_in => Rd_mux_out,
 	Rs1_in=> Rs1_stage2,
-	Rs2_in => Rs2_stage2,
+	Rs2_in => Rs2_mux_out,
 	Imm9_in => Pipe1_Instr_out( 8 downto 0),
 	Pc_in => Pipe1_PC_out( 15 downto 0),
 
@@ -388,7 +396,7 @@ port map(	Rd_in => Rd_mux_out,
 	Load_0_out => Load_0_stage3,
 	Rs1_dep_out => Rs1_dep_stage3,Rs2_dep_out => Rs2_dep_stage3,
 	JAL_bit_out => JAL_bit_stage3,
-	JLR_bit_out => JAL_bit_stage3,
+	JLR_bit_out => JLR_bit_stage3,
 	LM_SM_bit_out => LM_SM_bit_stage3,
 
 	clk =>clk,enable=> pipe2_enable,reset => pipe2_reset
@@ -490,6 +498,7 @@ pipe3_reset <= reset or reset_3_ch;
 
 		clk=>clk,
 		enable=>pipe3_enable,
+		S2_enable => S2_enable_pipe3,
 		reset=>pipe3_reset
 	);
 -----------------------------------------------SE6-----------------------
@@ -538,7 +547,7 @@ pipe3_reset <= reset or reset_3_ch;
 			control_bits => ALU_output_mux_cntrl_stage4
 		);
 
-ALU_output_mux_2_cntrl_stage4 <= LM_SM_bit_stage4 and (not LM_SM_bit_stage5);
+ALU_output_mux_2_cntrl_stage4 <= LM_SM_bit_stage4;
 
 	dut_alu_output_mux_2: Data_MUX 
 		generic map (control_bit_width => 1)
@@ -577,10 +586,20 @@ Z_en_final <= Z_en_control_hazard and ( (Z_en_stage4 and ((not Z_dep_stage4) or 
 		enable=>Z_en_final,
 		reset=>reset
 		);
+
+-----------------------------S1_S2_mux_stage4--------------------------------------
+
+	dut_S1_S2_mux_stage4: Data_MUX 
+	generic map (control_bit_width => 1)
+	port map(Din(0)=>S1_stage4, Din(1) =>S2_stage4,
+		Dout => S1_S2_mux_stage4_output,
+		control_bits(0) => LM_SM_bit_stage4
+	);
+
 ----------------------------------------------------data hazard 3 mux--------------
 	dut_DH3_mux: Data_MUX 
 	generic map (control_bit_width => 1)
-	port map(Din(0)=>S1_stage4, Din(1) =>Data_mem_out,
+	port map(Din(0)=>S1_S2_mux_stage4_output, Din(1) =>Data_mem_out,
 		Dout => DH3_mux_output,
 		control_bits => DH3_control_bit
 	);
@@ -590,7 +609,7 @@ Z_en_final <= Z_en_control_hazard and ( (Z_en_stage4 and ((not Z_dep_stage4) or 
 alu_z_output_in_pipe4 <= alu_zero_flag_output_stage4(0) and ALU_cntrl_stage4(1);
 
 pipe4_enable <= '1';
-pipe4_reset <= reset or reset_4_ch or (C_dep_stage4 and (not carry_reg_output)) or (Z_dep_stage4 and (not zero_reg_output));
+pipe4_reset <= reset or reset_4_ch or reset_4_lh or (C_dep_stage4 and (not carry_reg_output)) or (Z_dep_stage4 and (not zero_reg_output));
 
 	dut_pipe4: pipeline_reg4
 		port map(
@@ -694,9 +713,13 @@ pipe5_reset <= reset;
 ---------------------------Control Hazard--------------------------
 dut_control_hazard : Control_Hazard 
 	port map ( 	BEQ_bit_4 => alu_z_output_stage5,
-			JAL_bit_2 => JAL_bit_stage2, JLR_bit_2 => JLR_bit_stage2,
+			JAL_bit_2 => JAL_bit_stage3, JLR_bit_2 => JLR_bit_stage3,
 			Rd_3 => Rd_stage4, Rd_4 => Rd_stage5,
 			mem_read_4 => mem_read_stage5,
+			Z_flag=>zero_reg_output, 
+			Z_dep_stage4=>Z_dep_stage4,
+			C_flag=>carry_reg_output, 
+			C_dep_stage4=>C_dep_stage4,
 			reset_1 => reset_1_ch, reset_2 => reset_2_ch, reset_3 => reset_3_ch, reset_4 => reset_4_ch,
 			incrementor_mux_ctrl => pc_adder_mux_cntrl,
 			incrementor_mux_2_ctrl => pc_adder_mux_2_cntrl,
@@ -706,13 +729,20 @@ dut_control_hazard : Control_Hazard
 
 dut_data_hazard : Data_Hazard 
 	port map ( 	Rs1_2 => Rs1_stage3, Rs2_2 => Rs2_stage3, Rs1_3 => Rs1_stage4,
+			Rs2_3 => Rs2_stage4, Rs1_dep_3 => Rs1_dep_stage4, Rs2_dep_3 => Rs2_dep_stage4, 
 			Rd_3 => Rd_stage4, Rd_4 => Rd_stage5, Rd_5 => Rd_stage6, 
 			Load_0_4 => Load_0_stage5,
+			Load_0_3 => Load_0_stage4,
 			RF_en_3 => RF_enable_stage4, RF_en_4 => RF_enable_stage5, RF_en_5 => RF_enable_stage6,
 			mem_write_3 => mem_write_stage4,
+			Z_flag=>zero_reg_output, 
+			Z_dep_stage4=>Z_dep_stage4,
+			C_flag=>carry_reg_output, 
+			C_dep_stage4=>C_dep_stage4,
 			LM_SM_bit_stage4 => LM_SM_bit_stage4, LM_SM_bit_stage5 => LM_SM_bit_stage5,
 			DH1 => DH1_control_bits, DH2 =>DH2_control_bits,
-			DH3 => DH3_control_bit(0)
+			DH3 => DH3_control_bit(0),
+			S2_enable => S2_enable_pipe3
 		);
 
 dut_load_hazard : Load_hazard 

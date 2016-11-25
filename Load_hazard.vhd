@@ -38,7 +38,7 @@ begin
 		if(Rd_4 = "111" and Load_0_4 = '1') then
 			vZ_mux_ctrl := '1';
 			--vZ_en = '1';
-		elsif(Load_0_4 = '1' and ((Rd_4 = Rs1_3 and Rs1_dep_3 = '1') or (Rd_4 = Rs2_3 and Rs2_dep_3 = '1') or Z_dep_3 = '1')) then 
+		elsif(Load_0_4 = '1' and ( ((Rd_4 = Rs1_3) and (Rs1_dep_3 = '1')) or ((Rd_4 = Rs2_3) and (Rs2_dep_3 = '1')) or (Z_dep_3 = '1') )) then 
 			--dependent instruction			
 			--stall case
 			vpipereg_1_en := '0';

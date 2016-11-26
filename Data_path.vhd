@@ -118,7 +118,7 @@ signal ALU_b_input_mux_cntrl_stage4  : std_logic;
 signal ALU_cntrl_stage4,ALU_output_mux_cntrl_stage4:std_logic_vector(1 downto 0);
 signal Load_0_stage4:std_logic;
 signal LM_SM_bit_stage4 : std_logic;
-signal pipe3_enable,pipe3_reset, S2_enable_pipe3 :std_logic;
+signal pipe3_enable,pipe3_reset, S2_enable_pipe3, S1_enable_pipe3 :std_logic;
 signal Rs1_dep_stage4, Rs2_dep_stage4:std_logic;
 ----------------------------SE6 signals
 signal SE6_output: std_logic_vector(15 downto 0);
@@ -499,6 +499,7 @@ pipe3_reset <= reset or reset_3_ch;
 		clk=>clk,
 		enable=>pipe3_enable,
 		S2_enable => S2_enable_pipe3,
+		S1_enable => S1_enable_pipe3,
 		reset=>pipe3_reset
 	);
 -----------------------------------------------SE6-----------------------
@@ -743,7 +744,8 @@ dut_data_hazard : Data_Hazard
 			LM_SM_bit_stage4 => LM_SM_bit_stage4, LM_SM_bit_stage5 => LM_SM_bit_stage5,
 			DH1 => DH1_control_bits, DH2 =>DH2_control_bits,
 			DH3 => DH3_control_bit(0),
-			S2_enable => S2_enable_pipe3
+			S2_enable => S2_enable_pipe3,
+			S1_enable => S1_enable_pipe3
 		);
 
 dut_load_hazard : Load_hazard 

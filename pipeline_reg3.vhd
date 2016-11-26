@@ -41,7 +41,7 @@ port(
 	LM_SM_bit_in:in std_logic;
 	LM_SM_bit_out:out std_logic;
 
-	clk,enable,S2_enable,reset :in std_logic
+	clk,enable,S2_enable,S1_enable,reset :in std_logic
 );
 
 
@@ -49,7 +49,7 @@ end entity;
 
 
 architecture Formula_Pipeline_reg3 of pipeline_reg3 is
-signal S2_enable_sig:std_logic;
+signal S2_enable_sig, S1_enable_sig:std_logic;
 begin
 
 	dut_rd_reg: DataRegister
@@ -70,12 +70,12 @@ begin
 			      Dout => Rs2_out,
 			      clk=>clk, enable=>enable,reset=>reset);
 
-
+	S1_enable_sig <= S1_enable or enable;
 	dut_S1_reg: DataRegister
 			generic map(data_width=>16)
 			port map (Din=> S1_in,
 			      Dout => S1_out,
-			      clk=>clk, enable=>enable,reset=>reset);
+			      clk=>clk, enable=>S1_enable_sig,reset=>reset);
 	S2_enable_sig <= S2_enable or enable;
 	dut_S2_reg: DataRegister
 			generic map(data_width=>16)

@@ -296,7 +296,7 @@ port(
 	LM_SM_bit_in:in std_logic;
 	LM_SM_bit_out:out std_logic;
 
-	clk,enable,S2_enable,reset :in std_logic
+	clk,enable,S2_enable,S1_enable,reset :in std_logic
 );
 
 end component;
@@ -403,7 +403,7 @@ component Data_Hazard is
 			LM_SM_bit_stage4, LM_SM_bit_stage5 : in std_logic;
 			DH1, DH2 : out std_logic_vector(1 downto 0);
 			DH3: out std_logic;
-			S2_enable : out std_logic
+			S2_enable, S1_enable : out std_logic
 			);
 end component;
 

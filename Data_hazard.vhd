@@ -41,12 +41,9 @@ begin
 		if(Rs1_3 = Rd_4 and Rs1_dep_3 = '1' and Load_0_4 = '1') then
 			vDH1 := "10";
 			vS2_enable := '1';
-		elsif((Rd_3 = Rs1_2 and RF_en_3 = '1') or (LM_SM_bit_stage4 = '1')) then
-			if((Z_flag = '0' and z_dep_stage4 = '1') or (C_flag = '0' and C_dep_stage4 = '1'))then
-				vDH1 := "00";
-			else 			
-				vDH1 := "11";
-			end if;
+		elsif((Rd_3 = Rs1_2 and RF_en_3 = '1' and (not ((Z_flag = '0' and z_dep_stage4 = '1') or (C_flag = '0' and C_dep_stage4 = '1')))) 
+					or (LM_SM_bit_stage4 = '1')) then
+			vDH1 := "11";
 		elsif(Rd_4 = Rs1_2 and RF_en_4 = '1') then
 			vDH1 := "10";
 		elsif(Rd_5 = Rs1_2 and RF_en_5 = '1') then

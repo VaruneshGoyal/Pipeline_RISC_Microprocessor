@@ -22,7 +22,7 @@ end entity;
 architecture Behave of Control_Hazard is
 
 begin
-	process(BEQ_bit_4, JAL_bit_2, JLR_bit_2, Rd_3, Rd_4, mem_read_4,RF_enable_stage3)
+	process(BEQ_bit_4, JAL_bit_2, JLR_bit_2, Rd_3, Rd_4, mem_read_4, RF_enable_stage3, Z_flag, Z_dep_stage4, C_flag, C_dep_stage4)
 		variable vPC_mux_ctrl : std_logic_vector (1 downto 0);
 		variable vincrementor_mux_ctrl : std_logic_vector (1 downto 0);
 		variable vreset_1 : std_logic;

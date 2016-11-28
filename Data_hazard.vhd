@@ -24,8 +24,7 @@ end entity;
 architecture Behave of Data_Hazard is
 
 begin
-	process(Rs1_2, Rs2_2, Rs1_3, Rd_3, Rd_4, Rd_5, Load_0_3, Load_0_4, RF_en_3, RF_en_4, RF_en_5, mem_write_3, LM_SM_bit_stage4, LM_SM_bit_stage5,
-			Rs2_3, Rs1_dep_3, Rs2_dep_3 )
+	process(Rs1_2, Rs2_2, Rs1_3, Rd_3, Rd_4, Rd_5, Load_0_3, Load_0_4, RF_en_3, RF_en_4, RF_en_5, mem_write_3, LM_SM_bit_stage4, LM_SM_bit_stage5, Rs2_3, Rs1_dep_3, Rs2_dep_3, Z_flag, Z_dep_stage4, C_flag, C_dep_stage4)
 		variable vDH1, vDH2 : std_logic_vector(1 downto 0);
 		variable vDH3: std_logic;
 		variable vS2_enable,vS1_enable : std_logic;
